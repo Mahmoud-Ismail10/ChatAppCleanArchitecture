@@ -1,5 +1,7 @@
-﻿using ChatApp.Domain.Repositories.Contracts;
+﻿using ChatApp.Application.Services.Contracts;
+using ChatApp.Domain.Repositories.Contracts;
 using ChatApp.Infrastructure.Repositories;
+using ChatApp.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ChatApp.Infrastructure
@@ -8,6 +10,15 @@ namespace ChatApp.Infrastructure
     {
         public static IServiceCollection AddInfrastructureDependencies(this IServiceCollection services)
         {
+            services.AddMemoryCache();
+
+            services.AddTransient<IOtpService, OtpService>();
+            services.AddTransient<ISessionService, SessionService>();
+            services.AddTransient<ISmsService, SmsService>();
+            services.AddTransient<IUserService, UserService>();
+
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<ISessionRepository, SessionRepository>();
             services.AddTransient(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
             return services;
         }

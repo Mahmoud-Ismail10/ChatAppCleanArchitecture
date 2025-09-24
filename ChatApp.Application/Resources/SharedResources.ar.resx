@@ -126,11 +126,29 @@
   <data name="Deleted" xml:space="preserve">
     <value>تم الحذف بنجاح</value>
   </data>
+  <data name="FailedToSendOtp" xml:space="preserve">
+    <value>فشل في إرسال رمز التحقق ،من فضلك حاول مره اخري</value>
+  </data>
   <data name="NotEmpty" xml:space="preserve">
-    <value>يجب ألا يكون الحقل فارغًا</value>
+    <value>يجب ألا يكون هذا الحقل فارغًا</value>
   </data>
   <data name="NotFound" xml:space="preserve">
     <value>غير موجود</value>
+  </data>
+  <data name="OtpLengthIs6" xml:space="preserve">
+    <value>يجب أن يتكون رمز التحقق من 6 أرقام</value>
+  </data>
+  <data name="OtpSentSuccessfully" xml:space="preserve">
+    <value>تم إرسال رمز التحقق بنجاح</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>رقم الهاتف</value>
+  </data>
+  <data name="PhoneNumberFormat" xml:space="preserve">
+    <value>يجب أن يكون رقم الهاتف بتنسيق E.164 (مثال: ‎+1234567890).</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>هذا الحقل مطلوب</value>
   </data>
   <data name="Success" xml:space="preserve">
     <value>تمت العملية بنجاح</value>
@@ -143,5 +161,32 @@
   </data>
   <data name="Updated" xml:space="preserve">
     <value>تم التحديث بنجاح</value>
+  </data>
+  <data name="YourOTPCodeIs" xml:space="preserve">
+    <value>رمز التحقق الخاص بك هو:</value>
+  </data>
+  <data name="OtpVerifiedSuccessfully" xml:space="preserve">
+    <value>تم التحقق من الرمز بنجاح</value>
+  </data>
+  <data name="InvalidOtp" xml:space="preserve">
+    <value>رمز التحقق غير صالح</value>
+  </data>
+  <data name="UserRegisteredSuccessfully" xml:space="preserve">
+    <value>تم تسجيل المستخدم بنجاح</value>
+  </data>
+  <data name="FailedToRegisterUser" xml:space="preserve">
+    <value>فشل في تسجيل المستخدم</value>
+  </data>
+  <data name="UserId" xml:space="preserve">
+    <value>معرف المستخدم</value>
+  </data>
+  <data name="Otp" xml:space="preserve">
+    <value>رمز التحقق</value>
+  </data>
+  <data name="SessionCreatedSuccessfully" xml:space="preserve">
+    <value>تم إنشاء الجلسة بنجاح</value>
+  </data>
+  <data name="FailedToCreateSession" xml:space="preserve">
+    <value>فشل في إنشاء الجلسة</value>
   </data>
 </root>

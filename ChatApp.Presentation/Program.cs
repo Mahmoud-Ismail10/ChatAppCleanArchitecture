@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Serilog;
 using System.Globalization;
 
+
 Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddSignalR();
+builder.Services.AddSwaggerGen();
 
 #region Dependency Injections
 builder.Services
@@ -62,7 +64,8 @@ builder.Services.AddCors(options =>
 
 #region Serilog
 Log.Logger = new LoggerConfiguration()
-  .ReadFrom.Configuration(builder.Configuration).CreateLogger();
+              .ReadFrom.Configuration(builder.Configuration)
+              .CreateLogger();
 builder.Services.AddSerilog();
 #endregion
 
@@ -71,7 +74,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 #region Localization Middleware
@@ -80,6 +84,7 @@ app.UseRequestLocalization(options!.Value);
 #endregion
 
 app.UseMiddleware<ErrorHandlerMiddleware>();
+app.UseMiddleware<SessionKeyAuthenticationMiddleware>();
 
 app.UseHttpsRedirection();
 
@@ -94,7 +99,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHub<ChatHub>("/hubs/chat");
-
 app.MapHub<NotificationsHub>("/hubs/notifications");
 
 app.Run();

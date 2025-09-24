@@ -11,7 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services.Contracts\" />
+    <Folder Include="Features\Authentication\Queries\" />
+    <Folder Include="Mapping\" />
   </ItemGroup>
 
   <ItemGroup>

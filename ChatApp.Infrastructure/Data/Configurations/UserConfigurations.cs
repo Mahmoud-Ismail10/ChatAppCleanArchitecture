@@ -10,7 +10,7 @@ namespace ChatApp.Infrastructure.Data.Configurations
         {
             builder.Property(u => u.Name)
                 .HasMaxLength(50)
-                .IsRequired();
+                .IsRequired(false);
 
             builder.Property(u => u.PhoneNumber)
                 .HasMaxLength(15)

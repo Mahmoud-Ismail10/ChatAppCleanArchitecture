@@ -1,5 +1,4 @@
 ﻿using ChatApp.Application.Bases;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.ComponentModel.DataAnnotations;
