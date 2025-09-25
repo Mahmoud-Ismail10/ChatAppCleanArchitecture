@@ -7,9 +7,9 @@ namespace ChatApp.Infrastructure.Repositories
 {
     public class SessionRepository : ISessionRepository
     {
-        private readonly ChatAppBbContext _dbContext;
+        private readonly ChatAppDbContext _dbContext;
 
-        public SessionRepository(ChatAppBbContext dbContext)
+        public SessionRepository(ChatAppDbContext dbContext)
         {
             _dbContext = dbContext;
         }

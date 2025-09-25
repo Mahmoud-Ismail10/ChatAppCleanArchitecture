@@ -7,9 +7,9 @@ namespace ChatApp.Infrastructure.Repositories
 {
     public class GenericRepositoryAsync<T> : IGenericRepositoryAsync<T> where T : class
     {
-        protected readonly ChatAppBbContext _dbContext;
+        protected readonly ChatAppDbContext _dbContext;
 
-        public GenericRepositoryAsync(ChatAppBbContext dbContext)
+        public GenericRepositoryAsync(ChatAppDbContext dbContext)
         {
             _dbContext = dbContext;
         }

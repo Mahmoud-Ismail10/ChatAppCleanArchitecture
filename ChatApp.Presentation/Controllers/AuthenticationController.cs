@@ -11,28 +11,28 @@ namespace ChatApp.Presentation.Controllers
         public async Task<IActionResult> SendOtp([FromQuery] SendOtpCommand command)
         {
             var result = await Mediator.Send(command);
-            return Ok(result);
+            return NewResult(result);
         }
 
         [HttpPost(Router.Authentication.VerifyOtp)]
         public async Task<IActionResult> VerifyOtp([FromQuery] VerifyOtpCommand command)
         {
             var result = await Mediator.Send(command);
-            return Ok(result);
+            return NewResult(result);
         }
 
         [HttpPost(Router.Authentication.Register)]
         public async Task<IActionResult> Register([FromQuery] RegisterUserCommand command)
         {
             var result = await Mediator.Send(command);
-            return Ok(result);
+            return NewResult(result);
         }
 
         [HttpPost(Router.Authentication.CreateSession)]
         public async Task<IActionResult> CreateSession([FromQuery] CreateSessionCommand command)
         {
             var result = await Mediator.Send(command);
-            return Ok(result);
+            return NewResult(result);
         }
     }
 }

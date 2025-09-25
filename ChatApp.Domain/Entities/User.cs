@@ -14,6 +14,7 @@
         public ICollection<ChatMember> ChatMembers { get; set; } = new HashSet<ChatMember>();
         public ICollection<MessageStatus> MessageStatuses { get; set; } = new HashSet<MessageStatus>();
         public ICollection<Message> Messages { get; set; } = new HashSet<Message>();
+        public ICollection<Session> Sessions { get; set; } = new HashSet<Session>();
         public ICollection<Contact> Contacts { get; set; } = new HashSet<Contact>(); // Contacts added by this user
         public ICollection<Contact> ContactOf { get; set; } = new HashSet<Contact>(); // Users who have added this user as a contact
     }

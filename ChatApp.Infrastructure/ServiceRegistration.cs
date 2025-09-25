@@ -14,7 +14,7 @@ namespace ChatApp.Infrastructure
         {
             // SQL Server connection
             var sqlConnectionString = configuration.GetConnectionString("ConnectionString");
-            services.AddDbContext<ChatAppBbContext>(options => options.UseSqlServer(sqlConnectionString));
+            services.AddDbContext<ChatAppDbContext>(options => options.UseSqlServer(sqlConnectionString));
 
             // Twilio Settings
             var twilioSettings = new TwilioSettings();

@@ -16,5 +16,11 @@
             public const string Register = Prefix + "register";
             public const string CreateSession = Prefix + "createSession";
         }
+
+        public static class ChatMember
+        {
+            public const string Prefix = Rule + "chatsMember/";
+            public const string GetAll = Prefix + "getAll";
+        }
     }
 }

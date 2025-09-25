@@ -189,4 +189,10 @@
   <data name="FailedToCreateSession" xml:space="preserve">
     <value>فشل في إنشاء الجلسة</value>
   </data>
+  <data name="ChatNotFound" xml:space="preserve">
+    <value>لم يتم العثور على الدردشة</value>
+  </data>
+  <data name="NoChatsFound" xml:space="preserve">
+    <value>لم يتم العثور على أي دردشات</value>
+  </data>
 </root>

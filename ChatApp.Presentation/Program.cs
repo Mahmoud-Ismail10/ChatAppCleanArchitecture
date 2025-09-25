@@ -2,7 +2,9 @@ using ChatApp.Application;
 using ChatApp.Infrastructure;
 using ChatApp.Presentation.Hubs;
 using ChatApp.Presentation.Middlewares;
+using ChatApp.Presentation.Security;
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
 using Serilog;
@@ -19,6 +21,13 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddSignalR();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpContextAccessor();
+
+#region Authorization
+builder.Services.AddAuthentication("SessionKey")
+.AddScheme<AuthenticationSchemeOptions, SessionKeyAuthenticationHandler>("SessionKey", null);
+builder.Services.AddAuthorization();
+#endregion
 
 #region Dependency Injections
 builder.Services
@@ -84,7 +93,6 @@ app.UseRequestLocalization(options!.Value);
 #endregion
 
 app.UseMiddleware<ErrorHandlerMiddleware>();
-app.UseMiddleware<SessionKeyAuthenticationMiddleware>();
 
 app.UseHttpsRedirection();
 

@@ -4,9 +4,9 @@ using System.Reflection;
 
 namespace ChatApp.Infrastructure.Data
 {
-    public class ChatAppBbContext : DbContext
+    public class ChatAppDbContext : DbContext
     {
-        public ChatAppBbContext(DbContextOptions<ChatAppBbContext> options) : base(options)
+        public ChatAppDbContext(DbContextOptions<ChatAppDbContext> options) : base(options)
         {
         }
 

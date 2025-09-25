@@ -19,8 +19,8 @@ namespace ChatApp.Infrastructure.Data.Configurations
                 .IsRequired();
 
             builder.HasOne(s => s.User)
-                .WithOne()
-                .HasForeignKey<Session>(s => s.UserId)
+                .WithMany(u => u.Sessions)
+                .HasForeignKey(s => s.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

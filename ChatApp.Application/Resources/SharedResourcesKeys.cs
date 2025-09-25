@@ -26,6 +26,8 @@
         public const string UserRegisteredSuccessfully = "UserRegisteredSuccessfully";
         public const string SessionCreatedSuccessfully = "SessionCreatedSuccessfully";
         public const string FailedToCreateSession = "FailedToCreateSession";
+        public const string ChatNotFound = "ChatNotFound";
+        public const string NoChatsFound = "NoChatsFound";
 
     }
 }

@@ -11,9 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ChatApp.Infrastructure.Data.Migrations
 {
-    [DbContext(typeof(ChatAppBbContext))]
-    [Migration("20250924022706_AddingSessionsTable")]
-    partial class AddingSessionsTable
+    [DbContext(typeof(ChatAppDbContext))]
+    [Migration("20250925154742_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -219,8 +219,8 @@ namespace ChatApp.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("KeyHash")
                         .IsRequired()
@@ -236,8 +236,7 @@ namespace ChatApp.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("Sessions");
                 });
@@ -259,7 +258,6 @@ namespace ChatApp.Infrastructure.Data.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -295,7 +293,7 @@ namespace ChatApp.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ChatApp.Domain.Entities.ChatMember", b =>
                 {
-                    b.HasOne("ChatApp.Domain.Entities.Chat", null)
+                    b.HasOne("ChatApp.Domain.Entities.Chat", "Chat")
                         .WithMany("ChatMembers")
                         .HasForeignKey("ChatId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -306,6 +304,8 @@ namespace ChatApp.Infrastructure.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Chat");
                 });
 
             modelBuilder.Entity("ChatApp.Domain.Entities.Contact", b =>
@@ -368,8 +368,8 @@ namespace ChatApp.Infrastructure.Data.Migrations
             modelBuilder.Entity("ChatApp.Domain.Entities.Session", b =>
                 {
                     b.HasOne("ChatApp.Domain.Entities.User", "User")
-                        .WithOne()
-                        .HasForeignKey("ChatApp.Domain.Entities.Session", "UserId")
+                        .WithMany("Sessions")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -401,6 +401,8 @@ namespace ChatApp.Infrastructure.Data.Migrations
                     b.Navigation("MessageStatuses");
 
                     b.Navigation("Messages");
+
+                    b.Navigation("Sessions");
                 });
 #pragma warning restore 612, 618
         }

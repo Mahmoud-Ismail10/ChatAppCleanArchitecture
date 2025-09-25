@@ -4,9 +4,9 @@ using ChatApp.Infrastructure.Data;
 
 namespace ChatApp.Infrastructure.Repositories
 {
-    public class UserRepository : GenericRepositoryAsync<User>, IUserRepository
+    public class ChatRepository : GenericRepositoryAsync<Chat>, IChatRepository
     {
-        public UserRepository(ChatAppDbContext dbContext) : base(dbContext)
+        public ChatRepository(ChatAppDbContext dbContext) : base(dbContext)
         {
         }
     }

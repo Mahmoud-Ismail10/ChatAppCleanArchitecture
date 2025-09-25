@@ -189,4 +189,10 @@
   <data name="FailedToCreateSession" xml:space="preserve">
     <value>Failed to create session</value>
   </data>
+  <data name="ChatNotFound" xml:space="preserve">
+    <value>Chat not found</value>
+  </data>
+  <data name="NoChatsFound" xml:space="preserve">
+    <value>No chats found</value>
+  </data>
 </root>

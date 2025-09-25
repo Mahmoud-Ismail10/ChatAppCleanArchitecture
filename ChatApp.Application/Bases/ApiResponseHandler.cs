@@ -67,7 +67,7 @@ namespace ChatApp.Application.Bases
             return new ApiResponse<T>()
             {
                 StatusCode = System.Net.HttpStatusCode.Unauthorized,
-                Succeeded = true,
+                Succeeded = false,
                 Message = Message == null ? _stringLocalizer[SharedResourcesKeys.UnAuthorized] : Message
             };
         }

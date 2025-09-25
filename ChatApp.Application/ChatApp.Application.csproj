@@ -12,7 +12,8 @@
 
   <ItemGroup>
     <Folder Include="Features\Authentication\Queries\" />
-    <Folder Include="Mapping\" />
+    <Folder Include="Features\ChatsMember\Commands\" />
+    <Folder Include="Features\Chats\Commands\" />
   </ItemGroup>
 
   <ItemGroup>
