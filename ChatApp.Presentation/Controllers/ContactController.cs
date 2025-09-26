@@ -1,8 +1,28 @@
-﻿using ChatApp.Presentation.Base;
+﻿using ChatApp.Application.Features.Contacts.Commands.Models;
+using ChatApp.Application.Features.Contacts.Queries.Models;
+using ChatApp.Domain.AppMetaData;
+using ChatApp.Presentation.Base;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ChatApp.Presentation.Controllers
 {
     public class ContactController : AppControllerBase
     {
+        [Authorize(AuthenticationSchemes = "SessionKey")]
+        [HttpPost(Router.Contact.AddToContactsByPhoneNumber)]
+        public async Task<IActionResult> AddToContactsByPhoneNumber([FromQuery] AddToContactsByPhoneNumberCommand command)
+        {
+            var result = await Mediator.Send(command);
+            return NewResult(result);
+        }
+
+        [Authorize(AuthenticationSchemes = "SessionKey")]
+        [HttpGet(Router.Contact.GetAll)]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await Mediator.Send(new GetAllContactsQuery());
+            return NewResult(result);
+        }
     }
 }

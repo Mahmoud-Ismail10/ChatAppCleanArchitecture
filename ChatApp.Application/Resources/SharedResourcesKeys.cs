@@ -28,6 +28,11 @@
         public const string FailedToCreateSession = "FailedToCreateSession";
         public const string ChatNotFound = "ChatNotFound";
         public const string NoChatsFound = "NoChatsFound";
+        public const string UserNotFound = "UserNotFound";
+        public const string ContactAlreadyExists = "ContactAlreadyExists";
+        public const string ContactCreatedSuccessfully = "ContactCreatedSuccessfully";
+        public const string FailedToCreateContact = "FailedToCreateContact";
+        public const string NoContactsFound = "NoContactsFound";
 
     }
 }

@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace ChatApp.Application.Features.ChatsMember.Queries.Handlers
 {
-    public class ChatCommandHandler : ApiResponseHandler,
+    public class ChatMemberCommandHandler : ApiResponseHandler,
         IRequestHandler<GetAllChatsMemberQuery, ApiResponse<List<GetAllChatsMemberResponse>>>
     {
         #region Fields
@@ -20,7 +20,7 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Handlers
         #endregion
 
         #region Constructors
-        public ChatCommandHandler(IStringLocalizer<SharedResources> stringLocalizer,
+        public ChatMemberCommandHandler(IStringLocalizer<SharedResources> stringLocalizer,
             IHttpContextAccessor httpContextAccessor,
             IChatMemberService chatMemberService) : base(stringLocalizer)
         {

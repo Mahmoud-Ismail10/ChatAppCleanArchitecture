@@ -18,11 +18,13 @@ namespace ChatApp.Infrastructure
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IChatMemberService, ChatMemberService>();
             services.AddTransient<IChatService, ChatService>();
+            services.AddTransient<IContactService, ContactService>();
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IChatMemberRepository, ChatMemberRepository>();
             services.AddTransient<ISessionRepository, SessionRepository>();
             services.AddTransient<IChatRepository, ChatRepository>();
+            services.AddTransient<IContactRepository, ContactRepository>();
             services.AddTransient(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
             return services;
         }

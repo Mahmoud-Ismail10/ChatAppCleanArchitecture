@@ -178,7 +178,7 @@
     <value>Failed to register user</value>
   </data>
   <data name="UserId" xml:space="preserve">
-    <value>UserId</value>
+    <value>User Id</value>
   </data>
   <data name="Otp" xml:space="preserve">
     <value>OTP</value>
@@ -194,5 +194,20 @@
   </data>
   <data name="NoChatsFound" xml:space="preserve">
     <value>No chats found</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>User not found</value>
+  </data>
+  <data name="ContactAlreadyExists" xml:space="preserve">
+    <value>Contact already exists</value>
+  </data>
+  <data name="ContactCreatedSuccessfully" xml:space="preserve">
+    <value>Contact created successfully</value>
+  </data>
+  <data name="FailedToCreateContact" xml:space="preserve">
+    <value>Failed to create contact</value>
+  </data>
+  <data name="NoContactsFound" xml:space="preserve">
+    <value>No contacts found</value>
   </data>
 </root>

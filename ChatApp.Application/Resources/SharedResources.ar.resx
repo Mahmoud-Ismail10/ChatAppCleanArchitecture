@@ -195,4 +195,19 @@
   <data name="NoChatsFound" xml:space="preserve">
     <value>لم يتم العثور على أي دردشات</value>
   </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>لم يتم العثور على المستخدم</value>
+  </data>
+  <data name="ContactAlreadyExists" xml:space="preserve">
+    <value>جهة الاتصال موجودة بالفعل</value>
+  </data>
+  <data name="ContactCreatedSuccessfully" xml:space="preserve">
+    <value>تم إنشاء جهة الاتصال بنجاح</value>
+  </data>
+  <data name="FailedToCreateContact" xml:space="preserve">
+    <value>فشل في إنشاء جهة الاتصال</value>
+  </data>
+  <data name="NoContactsFound" xml:space="preserve">
+    <value>لم يتم العثور على أي جهات اتصال</value>
+  </data>
 </root>

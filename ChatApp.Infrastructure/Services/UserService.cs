@@ -1,6 +1,7 @@
 ﻿using ChatApp.Application.Services.Contracts;
 using ChatApp.Domain.Entities;
 using ChatApp.Domain.Repositories.Contracts;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 namespace ChatApp.Infrastructure.Services
@@ -31,6 +32,13 @@ namespace ChatApp.Infrastructure.Services
                 Log.Error("Error adding user : {ErrorMessage}", ex.InnerException?.Message ?? ex.Message);
                 return "Failed";
             }
+        }
+
+        public async Task<User?> GetUserByPhoneNumberAsync(string phoneNumber)
+        {
+            return await _userRepository.GetTableNoTracking()
+                                        .Where(u => u.PhoneNumber == phoneNumber)
+                                        .FirstOrDefaultAsync();
         }
         #endregion
     }
