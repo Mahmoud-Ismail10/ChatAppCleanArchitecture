@@ -9,8 +9,8 @@ namespace ChatApp.Infrastructure.Data.Configurations
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.Property(u => u.Name)
-                .HasMaxLength(50)
-                .IsRequired(false);
+                .HasMaxLength(30)
+                .IsRequired();
 
             builder.Property(u => u.PhoneNumber)
                 .HasMaxLength(15)

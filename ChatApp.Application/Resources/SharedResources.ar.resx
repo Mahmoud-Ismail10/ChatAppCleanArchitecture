@@ -210,4 +210,13 @@
   <data name="NoContactsFound" xml:space="preserve">
     <value>لم يتم العثور على أي جهات اتصال</value>
   </data>
+  <data name="MaxLengthIs30" xml:space="preserve">
+    <value>الحد الأقصى لعدد الحروف هو 30</value>
+  </data>
+  <data name="FailedToUploadImage" xml:space="preserve">
+    <value>فشل في تحميل الصورة</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
 </root>

@@ -1,6 +1,7 @@
 ﻿using ChatApp.Application.Services.Contracts;
 using ChatApp.Domain.Entities;
 using ChatApp.Domain.Repositories.Contracts;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -9,19 +10,30 @@ namespace ChatApp.Infrastructure.Services
     public class UserService : IUserService
     {
         #region Fields
+        private readonly IFileService _fileService;
         private readonly IUserRepository _userRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         #endregion
 
         #region Constructors
-        public UserService(IUserRepository userRepository)
+        public UserService(IFileService fileService,
+            IUserRepository userRepository,
+            IHttpContextAccessor httpContextAccessor)
         {
+            _fileService = fileService;
             _userRepository = userRepository;
+            _httpContextAccessor = httpContextAccessor;
         }
         #endregion
 
         #region Functions
-        public async Task<string> AddUserAsync(User user)
+        public async Task<string> AddUserAsync(User user, IFormFile file)
         {
+            var context = _httpContextAccessor.HttpContext!.Request;
+            var baseUrl = context.Scheme + "://" + context.Host;
+            var imageUrl = await _fileService.UploadImageAsync("Users", file);
+            if (imageUrl == "FailedToUploadImage") return "FailedToUploadImage";
+            user.ProfileImageUrl = baseUrl + imageUrl;
             try
             {
                 await _userRepository.AddAsync(user);

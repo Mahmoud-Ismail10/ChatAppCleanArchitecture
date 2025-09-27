@@ -61,14 +61,19 @@ namespace ChatApp.Application.Features.Authentication.Commands.Handlers
         {
             var user = new User();
             user.Id = Guid.NewGuid();
+            user.Name = request.Name;
             user.PhoneNumber = request.PhoneNumber;
+            user.Email = request.Email;
             user.CreatedAt = DateTimeOffset.UtcNow.ToLocalTime();
             user.LastSeenAt = DateTimeOffset.UtcNow.ToLocalTime();
 
-            var result = await _userService.AddUserAsync(user);
-            if (result == "Success")
-                return Success<string>(_stringLocalizer[SharedResourcesKeys.UserRegisteredSuccessfully], user.Id);
-            return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToRegisterUser]);
+            var result = await _userService.AddUserAsync(user, request.ProfileImageUrl!);
+            return result switch
+            {
+                "Success" => Success<string>(_stringLocalizer[SharedResourcesKeys.UserRegisteredSuccessfully], user.Id),
+                "FailedToUploadImage" => BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToUploadImage]),
+                _ => BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToRegisterUser])
+            };
         }
 
         public async Task<ApiResponse<string>> Handle(CreateSessionCommand request, CancellationToken cancellationToken)

@@ -210,4 +210,13 @@
   <data name="NoContactsFound" xml:space="preserve">
     <value>No contacts found</value>
   </data>
+  <data name="MaxLengthIs30" xml:space="preserve">
+    <value>Maximum length is 30 characters</value>
+  </data>
+  <data name="FailedToUploadImage" xml:space="preserve">
+    <value>Failed to upload image</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
 </root>

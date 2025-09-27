@@ -19,6 +19,7 @@ namespace ChatApp.Infrastructure
             services.AddTransient<IChatMemberService, ChatMemberService>();
             services.AddTransient<IChatService, ChatService>();
             services.AddTransient<IContactService, ContactService>();
+            services.AddTransient<IFileService, FileService>();
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IChatMemberRepository, ChatMemberRepository>();

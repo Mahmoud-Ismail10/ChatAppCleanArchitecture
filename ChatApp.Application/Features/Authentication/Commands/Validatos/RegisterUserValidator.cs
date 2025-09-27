@@ -22,6 +22,11 @@ namespace ChatApp.Application.Features.Authentication.Commands.Validatos
         #region Handle Functions
         public void ApplyValidationRoles()
         {
+            RuleFor(x => x.Name)
+            .NotEmpty().WithMessage(_stringLocalizer[SharedResourcesKeys.NotEmpty])
+            .NotNull().WithMessage(_stringLocalizer[SharedResourcesKeys.Required])
+            .MaximumLength(30).WithMessage(_stringLocalizer[SharedResourcesKeys.MaxLengthIs30]);
+
             RuleFor(x => x.PhoneNumber)
                 .NotEmpty().WithMessage(_stringLocalizer[SharedResourcesKeys.NotEmpty])
                 .NotNull().WithMessage(_stringLocalizer[SharedResourcesKeys.Required])

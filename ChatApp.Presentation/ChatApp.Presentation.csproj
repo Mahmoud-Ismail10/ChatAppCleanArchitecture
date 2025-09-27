@@ -30,4 +30,8 @@
     <ProjectReference Include="..\ChatApp.Infrastructure\ChatApp.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Users\" />
+  </ItemGroup>
+
 </Project>

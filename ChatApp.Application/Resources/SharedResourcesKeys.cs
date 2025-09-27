@@ -10,11 +10,13 @@
         public const string UnAuthorized = "UnAuthorized";
         public const string UnprocessableEntity = "UnprocessableEntity";
         public const string BadRequest = "BadRequest";
+        public const string Name = "Name";
         public const string PhoneNumber = "PhoneNumber";
         public const string Otp = "Otp";
         public const string UserId = "UserId";
         public const string NotEmpty = "NotEmpty";
         public const string Required = "Required";
+        public const string MaxLengthIs30 = "MaxLengthIs30";
         public const string PhoneNumberFormat = "PhoneNumberFormat";
         public const string YourOTPCodeIs = "YourOTPCodeIs";
         public const string FailedToSendOtp = "FailedToSendOtp";
@@ -33,6 +35,7 @@
         public const string ContactCreatedSuccessfully = "ContactCreatedSuccessfully";
         public const string FailedToCreateContact = "FailedToCreateContact";
         public const string NoContactsFound = "NoContactsFound";
+        public const string FailedToUploadImage = "FailedToUploadImage";
 
     }
 }
