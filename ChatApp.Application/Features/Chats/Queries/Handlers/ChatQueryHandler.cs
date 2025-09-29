@@ -4,7 +4,6 @@ using ChatApp.Application.Features.Chats.Queries.Responses;
 using ChatApp.Application.Resources;
 using ChatApp.Application.Services.Contracts;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 
 namespace ChatApp.Application.Features.Chats.Queries.Handlers
@@ -14,37 +13,54 @@ namespace ChatApp.Application.Features.Chats.Queries.Handlers
     {
         #region Fields
         private readonly IStringLocalizer<SharedResources> _stringLocalizer;
+        private readonly ICurrentUserService _currentUserService;
+        private readonly IChatMemberService _chatMemberService;
         private readonly IChatService _chatService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         #endregion
 
         #region Constructors
         public ChatQueryHandler(IStringLocalizer<SharedResources> stringLocalizer,
             IChatService chatService,
-            IHttpContextAccessor httpContextAccessor) : base(stringLocalizer)
+            IChatMemberService chatMemberService,
+            ICurrentUserService currentUserService) : base(stringLocalizer)
         {
+            _currentUserService = currentUserService;
+            _chatMemberService = chatMemberService;
             _stringLocalizer = stringLocalizer;
             _chatService = chatService;
-            _httpContextAccessor = httpContextAccessor;
         }
         #endregion
 
         #region Handle Functions
         public async Task<ApiResponse<GetChatWithMessagesResponse>> Handle(GetChatWithMessagesQuery request, CancellationToken cancellationToken)
         {
-            var user = _httpContextAccessor.HttpContext?.User;
-            if (user == null)
-                return Unauthorized<GetChatWithMessagesResponse>(_stringLocalizer[SharedResourcesKeys.UnAuthorized]);
+            var currentUserId = _currentUserService.GetUserId();
+            var isAuthorized = await _chatMemberService.IsMemberOfChatAsync(currentUserId, request.ChatId);
+            if (!isAuthorized) return Unauthorized<GetChatWithMessagesResponse>(_stringLocalizer[SharedResourcesKeys.AccessDenied]);
 
             var chat = await _chatService.GetChatWithMessagesAsync(request.ChatId);
-            if (chat == null)
-                return NotFound<GetChatWithMessagesResponse>(_stringLocalizer[SharedResourcesKeys.ChatNotFound]);
+            if (chat == null) return NotFound<GetChatWithMessagesResponse>(_stringLocalizer[SharedResourcesKeys.ChatNotFound]);
+
+            string? chatName;
+            string? chatImageUrl;
+
+            if (chat.IsGroup)
+            {
+                chatName = chat.Name;
+                chatImageUrl = chat.GroupImageUrl;
+            }
+            else
+            {
+                var otherMember = await _chatMemberService.GetAnotherUserInSameChatAsync(currentUserId, chat.Id);
+                chatName = otherMember?.User?.Name;
+                chatImageUrl = otherMember?.User?.ProfileImageUrl;
+            }
 
             var response = new GetChatWithMessagesResponse(
                 chat.Id,
                 chat.IsGroup,
-                chat.Name,
-                chat.GroupImageUrl,
+                chatName,
+                chatImageUrl,
                 chat.Messages.Select(m => new MessageDto(
                     m.Id,
                     m.SenderId,

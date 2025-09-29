@@ -46,9 +46,18 @@ namespace ChatApp.Infrastructure.Services
         public async Task<ChatMember?> GetAnotherUserInSameChatAsync(Guid currentUserId, Guid chatId)
         {
             return await _chatMemberRepository.GetTableNoTracking()
-                                .Include(cm => cm.User)
-                                .Where(cm => cm.ChatId == chatId && cm.UserId != currentUserId)
-                                .FirstOrDefaultAsync();
+                                              .Include(cm => cm.User)
+                                              .Where(cm => cm.ChatId == chatId && cm.UserId != currentUserId)
+                                              .FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> IsMemberOfChatAsync(Guid userId, Guid chatId)
+        {
+            var result = await _chatMemberRepository.GetTableNoTracking()
+                                                    .Where(cm => cm.UserId == userId && cm.ChatId == chatId)
+                                                    .FirstOrDefaultAsync();
+            if (result == null) return false;
+            return true;
         }
         #endregion
     }

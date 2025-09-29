@@ -35,5 +35,11 @@
             public const string Prefix = Rule + "messages/";
             public const string SendMessageToContact = Prefix + "sendMessageToContact";
         }
+
+        public static class Chat
+        {
+            public const string Prefix = Rule + "chats/";
+            public const string GetChatWithMessages = Prefix + "getChatWithMessages/" + SingleRoute;
+        }
     }
 }

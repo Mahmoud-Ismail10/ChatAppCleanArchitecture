@@ -3,7 +3,7 @@
 namespace ChatApp.Application.Features.ChatsMember.Queries.Responses
 {
     public record GetAllChatsMemberResponse(
-        Guid Id,
+        Guid ChatId,
         bool IsGroup,
         string? ChatName,
         string? ChatImageUrl,
