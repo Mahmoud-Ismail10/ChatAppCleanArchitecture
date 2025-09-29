@@ -59,6 +59,20 @@ namespace ChatApp.Infrastructure.Services
                                         .Where(u => u.Id == userId)
                                         .FirstOrDefaultAsync();
         }
+
+        public async Task<string> UpdateUserAsync(User user)
+        {
+            try
+            {
+                await _userRepository.UpdateAsync(user);
+                return "Success";
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error updating user : {ErrorMessage}", ex.InnerException?.Message ?? ex.Message);
+                return "Failed";
+            }
+        }
         #endregion
     }
 }

@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ChatApp.Presentation.Controllers
 {
+    [Authorize(AuthenticationSchemes = "SessionKey")]
     public class ContactController : AppControllerBase
     {
-        [Authorize(AuthenticationSchemes = "SessionKey")]
         [HttpPost(Router.Contact.AddToContactsByPhoneNumber)]
         public async Task<IActionResult> AddToContactsByPhoneNumber([FromQuery] AddToContactsByPhoneNumberCommand command)
         {
@@ -17,7 +17,6 @@ namespace ChatApp.Presentation.Controllers
             return NewResult(result);
         }
 
-        [Authorize(AuthenticationSchemes = "SessionKey")]
         [HttpGet(Router.Contact.GetAll)]
         public async Task<IActionResult> GetAll()
         {

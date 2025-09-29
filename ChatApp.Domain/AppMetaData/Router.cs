@@ -41,5 +41,11 @@
             public const string Prefix = Rule + "chats/";
             public const string GetChatWithMessages = Prefix + "getChatWithMessages/" + SingleRoute;
         }
+
+        public static class User
+        {
+            public const string Prefix = Rule + "users/";
+            public const string GetUserStatus = Prefix + "getUserStatus/" + SingleRoute;
+        }
     }
 }

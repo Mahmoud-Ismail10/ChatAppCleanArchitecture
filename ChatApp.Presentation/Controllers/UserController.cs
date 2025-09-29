@@ -1,4 +1,4 @@
-﻿using ChatApp.Application.Features.ChatsMember.Queries.Models;
+﻿using ChatApp.Application.Features.Users.Queries.Models;
 using ChatApp.Domain.AppMetaData;
 using ChatApp.Presentation.Base;
 using Microsoft.AspNetCore.Authorization;
@@ -7,12 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace ChatApp.Presentation.Controllers
 {
     [Authorize(AuthenticationSchemes = "SessionKey")]
-    public class ChatMemberController : AppControllerBase
+    public class UserController : AppControllerBase
     {
-        [HttpGet(Router.ChatMember.GetAll)]
-        public async Task<IActionResult> GetAll()
+        [HttpGet(Router.User.GetUserStatus)]
+        public async Task<IActionResult> GetUserStatus([FromRoute] Guid id)
         {
-            var result = await Mediator.Send(new GetAllChatsMemberQuery());
+            var result = await Mediator.Send(new GetUserStatusQuery(id));
             return NewResult(result);
         }
     }

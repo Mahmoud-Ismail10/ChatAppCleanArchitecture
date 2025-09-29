@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ChatApp.Presentation.Controllers
 {
+    [Authorize(AuthenticationSchemes = "SessionKey")]
     public class MessageController : AppControllerBase
     {
-        [Authorize(AuthenticationSchemes = "SessionKey")]
         [HttpPost(Router.Message.SendMessageToContact)]
         public async Task<IActionResult> SendMessageToContact([FromForm] SendMessageToContactCommand command)
         {

@@ -119,8 +119,6 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                 return Success<string>(_stringLocalizer[SharedResourcesKeys.MessageSentSuccessfully]);
             }
             return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToSendMessage]);
-
-
         }
         #endregion
     }

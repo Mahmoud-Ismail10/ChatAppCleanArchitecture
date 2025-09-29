@@ -14,6 +14,7 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Handlers
         #region Fields
         private readonly IStringLocalizer<SharedResources> _stringLocalizer;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IOnlineUserService _onlineUserService;
         private readonly IChatMemberService _chatMemberService;
         private readonly IUserService _userService;
         #endregion
@@ -21,11 +22,13 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Handlers
         #region Constructors
         public ChatMemberCommandHandler(IStringLocalizer<SharedResources> stringLocalizer,
             ICurrentUserService currentUserService,
+            IOnlineUserService onlineUserService,
             IChatMemberService chatMemberService,
             IUserService userService) : base(stringLocalizer)
         {
             _stringLocalizer = stringLocalizer;
             _currentUserService = currentUserService;
+            _onlineUserService = onlineUserService;
             _chatMemberService = chatMemberService;
             _userService = userService;
         }
@@ -42,6 +45,7 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Handlers
             {
                 string? chatName;
                 string? chatImageUrl;
+                bool? isOnline = null;
 
                 if (m!.Chat!.IsGroup)
                 {
@@ -51,12 +55,14 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Handlers
                 else
                 {
                     var otherMember = await _chatMemberService.GetAnotherUserInSameChatAsync(currentUserId, m.Chat.Id);
+                    isOnline = _onlineUserService.IsUserOnline(otherMember!.UserId);
                     chatName = otherMember?.User?.Name;
                     chatImageUrl = otherMember?.User?.ProfileImageUrl;
                 }
                 return new GetAllChatsMemberResponse(
                     m.Chat.Id,
                     m.Chat.IsGroup,
+                    isOnline,
                     chatName,
                     chatImageUrl,
                     m.Chat.LastMessage?.Type,
