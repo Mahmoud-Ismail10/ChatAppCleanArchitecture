@@ -219,4 +219,28 @@
   <data name="Name" xml:space="preserve">
     <value>الاسم</value>
   </data>
+  <data name="FailedToCreateChat" xml:space="preserve">
+    <value>فشل في إنشاء الدردشة</value>
+  </data>
+  <data name="ContactId" xml:space="preserve">
+    <value>معرف جهة الاتصال</value>
+  </data>
+  <data name="SenderId" xml:space="preserve">
+    <value>معرف المُرسل</value>
+  </data>
+  <data name="ReceiverId" xml:space="preserve">
+    <value>معرف المُستلم</value>
+  </data>
+  <data name="MessageContent" xml:space="preserve">
+    <value>محتوى الرسالة</value>
+  </data>
+  <data name="MessageSentSuccessfully" xml:space="preserve">
+    <value>تم ارسال الرسالة بنجاح</value>
+  </data>
+  <data name="FailedToSendMessage" xml:space="preserve">
+    <value>فشل في ارسال الرسالة</value>
+  </data>
+  <data name="FailedToUpdateChat" xml:space="preserve">
+    <value>فشل في تحديث الدردشة</value>
+  </data>
 </root>

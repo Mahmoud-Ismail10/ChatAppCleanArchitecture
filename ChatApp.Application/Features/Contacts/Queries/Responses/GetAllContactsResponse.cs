@@ -2,8 +2,9 @@
 {
     public record GetAllContactsResponse(
         Guid ContactId,
-        string ContactName,
-        string ContactPhoneNumber,
-        string? ContactImageUrl
+        Guid ContactUserId,
+        string ContactUserName,
+        string ContactUserPhoneNumber,
+        string? ContactUserProfileImageUrl
     );
 }

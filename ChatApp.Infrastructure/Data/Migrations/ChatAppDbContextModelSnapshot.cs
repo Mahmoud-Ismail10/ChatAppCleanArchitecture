@@ -297,13 +297,15 @@ namespace ChatApp.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ChatApp.Domain.Entities.User", null)
+                    b.HasOne("ChatApp.Domain.Entities.User", "User")
                         .WithMany("ChatMembers")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Chat");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ChatApp.Domain.Entities.Contact", b =>

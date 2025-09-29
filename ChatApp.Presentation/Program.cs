@@ -1,5 +1,7 @@
 using ChatApp.Application;
+using ChatApp.Application.Services.Contracts;
 using ChatApp.Infrastructure;
+using ChatApp.Presentation.Helper;
 using ChatApp.Presentation.Hubs;
 using ChatApp.Presentation.Middlewares;
 using ChatApp.Presentation.Security;
@@ -22,6 +24,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddSignalR();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<IMessageNotifier, MessageNotifier>();
 
 #region Authorization
 builder.Services.AddAuthentication("SessionKey")

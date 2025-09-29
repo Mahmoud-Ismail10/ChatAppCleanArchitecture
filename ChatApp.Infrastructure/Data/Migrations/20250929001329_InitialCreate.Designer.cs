@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChatApp.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ChatAppDbContext))]
-    [Migration("20250925154742_InitialCreate")]
+    [Migration("20250929001329_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -258,8 +258,9 @@ namespace ChatApp.Infrastructure.Data.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -299,13 +300,15 @@ namespace ChatApp.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ChatApp.Domain.Entities.User", null)
+                    b.HasOne("ChatApp.Domain.Entities.User", "User")
                         .WithMany("ChatMembers")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Chat");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ChatApp.Domain.Entities.Contact", b =>

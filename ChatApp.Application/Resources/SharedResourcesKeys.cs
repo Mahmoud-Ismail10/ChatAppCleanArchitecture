@@ -12,8 +12,12 @@
         public const string BadRequest = "BadRequest";
         public const string Name = "Name";
         public const string PhoneNumber = "PhoneNumber";
+        public const string SenderId = "SenderId";
+        public const string ReceiverId = "ReceiverId";
+        public const string MessageContent = "MessageContent";
         public const string Otp = "Otp";
         public const string UserId = "UserId";
+        public const string ContactId = "ContactId";
         public const string NotEmpty = "NotEmpty";
         public const string Required = "Required";
         public const string MaxLengthIs30 = "MaxLengthIs30";
@@ -36,6 +40,10 @@
         public const string FailedToCreateContact = "FailedToCreateContact";
         public const string NoContactsFound = "NoContactsFound";
         public const string FailedToUploadImage = "FailedToUploadImage";
+        public const string FailedToCreateChat = "FailedToCreateChat";
+        public const string MessageSentSuccessfully = "MessageSentSuccessfully";
+        public const string FailedToSendMessage = "FailedToSendMessage";
+        public const string FailedToUpdateChat = "FailedToUpdateChat";
 
     }
 }

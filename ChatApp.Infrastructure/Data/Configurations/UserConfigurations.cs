@@ -28,11 +28,6 @@ namespace ChatApp.Infrastructure.Data.Configurations
 
             builder.Property(u => u.LastSeenAt)
                 .IsRequired();
-
-            builder.HasMany(u => u.ChatMembers)
-                .WithOne()
-                .HasForeignKey(cm => cm.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

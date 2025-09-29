@@ -5,8 +5,8 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Responses
     public record GetAllChatsMemberResponse(
         Guid Id,
         bool IsGroup,
-        string? Name,
-        string? GroupImageUrl,
+        string? ChatName,
+        string? ChatImageUrl,
         MessageType? MessageType,
         string? LastMessage,
         DateTimeOffset? LastMessageSendAt);

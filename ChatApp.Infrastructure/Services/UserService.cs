@@ -52,6 +52,13 @@ namespace ChatApp.Infrastructure.Services
                                         .Where(u => u.PhoneNumber == phoneNumber)
                                         .FirstOrDefaultAsync();
         }
+
+        public async Task<User?> GetUserByIdAsync(Guid userId)
+        {
+            return await _userRepository.GetTableNoTracking()
+                                        .Where(u => u.Id == userId)
+                                        .FirstOrDefaultAsync();
+        }
         #endregion
     }
 }

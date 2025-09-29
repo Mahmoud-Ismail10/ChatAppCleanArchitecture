@@ -219,4 +219,28 @@
   <data name="Name" xml:space="preserve">
     <value>Name</value>
   </data>
+  <data name="FailedToCreateChat" xml:space="preserve">
+    <value>Failed to create chat</value>
+  </data>
+  <data name="ContactId" xml:space="preserve">
+    <value>Contact Id</value>
+  </data>
+  <data name="SenderId" xml:space="preserve">
+    <value>Sender Id</value>
+  </data>
+  <data name="ReceiverId" xml:space="preserve">
+    <value>Receiver Id</value>
+  </data>
+  <data name="MessageContent" xml:space="preserve">
+    <value>Message Content</value>
+  </data>
+  <data name="MessageSentSuccessfully" xml:space="preserve">
+    <value>Message sent successfully</value>
+  </data>
+  <data name="FailedToSendMessage" xml:space="preserve">
+    <value>Failed to send message</value>
+  </data>
+  <data name="FailedToUpdateChat" xml:space="preserve">
+    <value>Failed to update chat</value>
+  </data>
 </root>

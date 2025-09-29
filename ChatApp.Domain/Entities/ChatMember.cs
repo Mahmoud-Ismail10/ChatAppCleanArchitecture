@@ -14,5 +14,6 @@ namespace ChatApp.Domain.Entities
         public bool IsPinned { get; set; }
 
         public Chat? Chat { get; set; }
+        public User? User { get; set; }
     }
 }

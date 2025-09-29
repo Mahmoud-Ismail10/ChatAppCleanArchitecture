@@ -34,6 +34,11 @@ namespace ChatApp.Infrastructure.Data.Configurations
                 .WithMany(c => c.ChatMembers)
                 .HasForeignKey(cm => cm.ChatId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(cm => cm.User)
+                .WithMany(c => c.ChatMembers)
+                .HasForeignKey(cm => cm.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

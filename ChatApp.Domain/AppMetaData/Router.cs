@@ -25,9 +25,15 @@
 
         public static class Contact
         {
-            public const string Prefix = Rule + "contact/";
+            public const string Prefix = Rule + "contacts/";
             public const string AddToContactsByPhoneNumber = Prefix + "addToContactsByPhoneNumber";
             public const string GetAll = Prefix + "getAll";
+        }
+
+        public static class Message
+        {
+            public const string Prefix = Rule + "messages/";
+            public const string SendMessageToContact = Prefix + "sendMessageToContact";
         }
     }
 }
