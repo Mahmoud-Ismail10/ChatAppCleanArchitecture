@@ -246,4 +246,7 @@
   <data name="AccessDenied" xml:space="preserve">
     <value>تم رفض الوصول</value>
   </data>
+  <data name="ChatMemberNotFound" xml:space="preserve">
+    <value>لم يتم العثور علي دردشة المستخدم</value>
+  </data>
 </root>

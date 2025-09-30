@@ -10,9 +10,9 @@ namespace ChatApp.Presentation.Controllers
     public class ChatController : AppControllerBase
     {
         [HttpGet(Router.Chat.GetChatWithMessages)]
-        public async Task<IActionResult> GetChatWithMessages([FromRoute] Guid id)
+        public async Task<IActionResult> GetChatWithMessages([FromQuery] GetChatWithMessagesQuery query)
         {
-            var result = await Mediator.Send(new GetChatWithMessagesQuery(id));
+            var result = await Mediator.Send(query);
             return NewResult(result);
         }
     }

@@ -30,6 +30,9 @@ namespace ChatApp.Infrastructure.Data.Configurations
             builder.Property(cm => cm.IsPinned)
                 .IsRequired();
 
+            builder.Property(cm => cm.LastReadMessageAt)
+                .IsRequired(false);
+
             builder.HasOne(cm => cm.Chat)
                 .WithMany(c => c.ChatMembers)
                 .HasForeignKey(cm => cm.ChatId)

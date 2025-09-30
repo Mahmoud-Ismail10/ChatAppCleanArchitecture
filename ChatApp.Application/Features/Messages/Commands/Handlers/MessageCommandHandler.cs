@@ -116,6 +116,9 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
 
                 // Broadcast the message to the receiver using SignalR
                 await _messageNotifier.NotifyMessageToContactAsync(messageMapper);
+                // Increment unread message count for the receiver
+                await _messageNotifier.NotifyUnreadIncrementAsync(chat.Id);
+
                 return Success<string>(_stringLocalizer[SharedResourcesKeys.MessageSentSuccessfully]);
             }
             return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToSendMessage]);

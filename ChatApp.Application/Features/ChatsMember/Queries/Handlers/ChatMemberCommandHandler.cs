@@ -16,7 +16,7 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Handlers
         private readonly ICurrentUserService _currentUserService;
         private readonly IOnlineUserService _onlineUserService;
         private readonly IChatMemberService _chatMemberService;
-        private readonly IUserService _userService;
+        private readonly IMessageService _messageService;
         #endregion
 
         #region Constructors
@@ -24,13 +24,13 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Handlers
             ICurrentUserService currentUserService,
             IOnlineUserService onlineUserService,
             IChatMemberService chatMemberService,
-            IUserService userService) : base(stringLocalizer)
+            IMessageService messageService) : base(stringLocalizer)
         {
             _stringLocalizer = stringLocalizer;
             _currentUserService = currentUserService;
             _onlineUserService = onlineUserService;
             _chatMemberService = chatMemberService;
-            _userService = userService;
+            _messageService = messageService;
         }
         #endregion
 
@@ -41,33 +41,37 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Handlers
             var chatMembers = await _chatMemberService.GetAllChatsMemberAsync(currentUserId);
             if (chatMembers == null || !chatMembers.Any())
                 return NotFound<List<GetAllChatsMemberResponse>>(_stringLocalizer[SharedResourcesKeys.NoChatsFound]);
-            var responseTasks = chatMembers.Select(async m =>
+            var responseTasks = chatMembers.Select(async cm =>
             {
                 string? chatName;
                 string? chatImageUrl;
                 bool? isOnline = null;
 
-                if (m!.Chat!.IsGroup)
+                var unreadCount = await _messageService.CountAsync(m => m.SentAt > cm!.LastReadMessageAt);
+
+                if (cm!.Chat!.IsGroup)
                 {
-                    chatName = m.Chat.Name;
-                    chatImageUrl = m.Chat.GroupImageUrl;
+                    chatName = cm.Chat.Name;
+                    chatImageUrl = cm.Chat.GroupImageUrl;
                 }
                 else
                 {
-                    var otherMember = await _chatMemberService.GetAnotherUserInSameChatAsync(currentUserId, m.Chat.Id);
+                    var otherMember = await _chatMemberService.GetAnotherUserInSameChatAsync(currentUserId, cm.Chat.Id);
                     isOnline = _onlineUserService.IsUserOnline(otherMember!.UserId);
                     chatName = otherMember?.User?.Name;
                     chatImageUrl = otherMember?.User?.ProfileImageUrl;
                 }
                 return new GetAllChatsMemberResponse(
-                    m.Chat.Id,
-                    m.Chat.IsGroup,
+                    cm.Id,
+                    cm.Chat.Id,
+                    cm.Chat.IsGroup,
                     isOnline,
                     chatName,
                     chatImageUrl,
-                    m.Chat.LastMessage?.Type,
-                    m.Chat.LastMessage?.Content,
-                    m.Chat.LastMessage?.SentAt);
+                    cm.Chat.LastMessage?.Type,
+                    cm.Chat.LastMessage?.Content,
+                    cm.Chat.LastMessage?.SentAt,
+                    unreadCount);
             }).ToList();
             var responses = (await Task.WhenAll(responseTasks)).ToList();
             return Success(responses);

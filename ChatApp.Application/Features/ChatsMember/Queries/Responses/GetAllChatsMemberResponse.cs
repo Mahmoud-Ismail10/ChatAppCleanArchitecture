@@ -3,6 +3,7 @@
 namespace ChatApp.Application.Features.ChatsMember.Queries.Responses
 {
     public record GetAllChatsMemberResponse(
+        Guid ChatMemberId,
         Guid ChatId,
         bool IsGroup,
         bool? IsOnline,
@@ -10,6 +11,7 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Responses
         string? ChatImageUrl,
         MessageType? MessageType,
         string? LastMessage,
-        DateTimeOffset? LastMessageSendAt);
+        DateTimeOffset? LastMessageSendAt,
+        int UnreadCount);
 
 }

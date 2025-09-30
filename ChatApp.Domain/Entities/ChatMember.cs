@@ -12,6 +12,7 @@ namespace ChatApp.Domain.Entities
         public DateTimeOffset? LeftAt { get; set; }
         public MemberStatus Status { get; set; }
         public bool IsPinned { get; set; }
+        public DateTimeOffset? LastReadMessageAt { get; set; }
 
         public Chat? Chat { get; set; }
         public User? User { get; set; }

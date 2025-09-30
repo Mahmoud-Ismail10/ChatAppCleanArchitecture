@@ -45,6 +45,7 @@
         public const string FailedToSendMessage = "FailedToSendMessage";
         public const string FailedToUpdateChat = "FailedToUpdateChat";
         public const string AccessDenied = "AccessDenied";
+        public const string ChatMemberNotFound = "ChatMemberNotFound";
 
     }
 }

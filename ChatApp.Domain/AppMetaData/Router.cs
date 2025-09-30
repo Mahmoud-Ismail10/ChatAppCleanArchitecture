@@ -39,7 +39,7 @@
         public static class Chat
         {
             public const string Prefix = Rule + "chats/";
-            public const string GetChatWithMessages = Prefix + "getChatWithMessages/" + SingleRoute;
+            public const string GetChatWithMessages = Prefix + "getChatWithMessages";
         }
 
         public static class User

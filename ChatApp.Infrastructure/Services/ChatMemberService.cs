@@ -1,7 +1,9 @@
-﻿using ChatApp.Application.Services.Contracts;
+﻿using ChatApp.Application.Resources;
+using ChatApp.Application.Services.Contracts;
 using ChatApp.Domain.Entities;
 using ChatApp.Domain.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using Serilog;
 
 namespace ChatApp.Infrastructure.Services
@@ -10,12 +12,15 @@ namespace ChatApp.Infrastructure.Services
     {
         #region Fields
         private readonly IChatMemberRepository _chatMemberRepository;
+        private readonly IStringLocalizer<SharedResources> _stringLocalizer;
         #endregion
 
         #region Constructors
-        public ChatMemberService(IChatMemberRepository chatMemberRepository)
+        public ChatMemberService(IChatMemberRepository chatMemberRepository,
+            IStringLocalizer<SharedResources> stringLocalizer)
         {
             _chatMemberRepository = chatMemberRepository;
+            _stringLocalizer = stringLocalizer;
         }
         #endregion
 
@@ -43,6 +48,20 @@ namespace ChatApp.Infrastructure.Services
             }
         }
 
+        public async Task<string> UpdateChatMemberAsync(ChatMember chatMember)
+        {
+            try
+            {
+                await _chatMemberRepository.UpdateAsync(chatMember);
+                return "Success";
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error in updating chat member: {Message}", ex.InnerException?.Message ?? ex.Message);
+                return "Failed";
+            }
+        }
+
         public async Task<ChatMember?> GetAnotherUserInSameChatAsync(Guid currentUserId, Guid chatId)
         {
             return await _chatMemberRepository.GetTableNoTracking()
@@ -58,6 +77,30 @@ namespace ChatApp.Infrastructure.Services
                                                     .FirstOrDefaultAsync();
             if (result == null) return false;
             return true;
+        }
+
+        public async Task MarkAsReadAsync(Guid chatMemberId)
+        {
+            try
+            {
+                var chatMember = await _chatMemberRepository.GetTableAsTracking()
+                        .FirstOrDefaultAsync(cm => cm.Id == chatMemberId);
+
+                if (chatMember == null) throw new Exception(_stringLocalizer[SharedResourcesKeys.ChatMemberNotFound]);
+
+                chatMember.LastReadMessageAt = DateTimeOffset.UtcNow.ToLocalTime();
+                await _chatMemberRepository.UpdateAsync(chatMember);
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error in mark messages as read : {Message}", ex.InnerException?.Message ?? ex.Message);
+            }
+        }
+
+        public async Task<ChatMember?> GetChatMemberByIdAsync(Guid chatMemberId)
+        {
+            return await _chatMemberRepository.GetTableNoTracking()
+                                              .FirstOrDefaultAsync(cm => cm.Id == chatMemberId);
         }
         #endregion
     }

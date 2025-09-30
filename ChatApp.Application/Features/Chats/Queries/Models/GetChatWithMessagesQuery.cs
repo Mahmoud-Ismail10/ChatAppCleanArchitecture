@@ -4,5 +4,7 @@ using MediatR;
 
 namespace ChatApp.Application.Features.Chats.Queries.Models
 {
-    public record GetChatWithMessagesQuery(Guid ChatId) : IRequest<ApiResponse<GetChatWithMessagesResponse>>;
+    public record GetChatWithMessagesQuery(
+        Guid ChatMemberId,
+        Guid ChatId) : IRequest<ApiResponse<GetChatWithMessagesResponse>>;
 }

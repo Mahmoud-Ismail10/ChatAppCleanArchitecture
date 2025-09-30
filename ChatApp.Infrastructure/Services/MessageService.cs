@@ -1,7 +1,9 @@
 ﻿using ChatApp.Application.Services.Contracts;
 using ChatApp.Domain.Entities;
 using ChatApp.Domain.Repositories.Contracts;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Linq.Expressions;
 
 namespace ChatApp.Infrastructure.Services
 {
@@ -18,7 +20,7 @@ namespace ChatApp.Infrastructure.Services
         }
         #endregion
 
-        #region Handle Functions
+        #region Functions
         public async Task<string> AddMessageAsync(Message message)
         {
             try
@@ -31,6 +33,11 @@ namespace ChatApp.Infrastructure.Services
                 Log.Error("Error in adding message : {Message}", ex.InnerException?.Message ?? ex.Message);
                 return "Failed";
             }
+        }
+
+        public async Task<int> CountAsync(Expression<Func<Message, bool>> predicate)
+        {
+            return await _messageRepository.GetTableNoTracking().CountAsync(predicate);
         }
         #endregion
     }

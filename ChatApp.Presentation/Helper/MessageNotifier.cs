@@ -23,6 +23,17 @@ namespace ChatApp.Presentation.Helper
         {
             await _hub.Clients.Group(message.ChatId.ToString()).SendAsync("ReceiveMessage", message);
         }
+
+        public async Task NotifyUnreadIncrementAsync(Guid chatId)
+        {
+            await _hub.Clients.Group(chatId.ToString()).SendAsync("UnreadCountIncremented", new { ChatId = chatId });
+        }
+
+        public async Task NotifyChatReadAsync(Guid chatId, Guid userId)
+        {
+            await _hub.Clients.Group(chatId.ToString()).SendAsync("ChatRead", new { ChatId = chatId, UserId = userId });
+        }
+
         #endregion
     }
 }
