@@ -249,4 +249,25 @@
   <data name="ChatMemberNotFound" xml:space="preserve">
     <value>لم يتم العثور علي دردشة المستخدم</value>
   </data>
+  <data name="NoActiveSessionFound" xml:space="preserve">
+    <value>لم يتم العثور على أي جلسة نشطة</value>
+  </data>
+  <data name="LoggedOutSuccessfully" xml:space="preserve">
+    <value>تم تسجيل الخروج بنجاح</value>
+  </data>
+  <data name="FailedToLogout" xml:space="preserve">
+    <value>فشل في تسجيل الخروج</value>
+  </data>
+  <data name="LoginSuccessfully" xml:space="preserve">
+    <value>تم تسجيل الدخول بنجاح</value>
+  </data>
+  <data name="MissingAuthorizationHeader" xml:space="preserve">
+    <value>رأس التفويض مفقود (Authorization)</value>
+  </data>
+  <data name="InvalidScheme" xml:space="preserve">
+    <value>مخطط غير صالح</value>
+  </data>
+  <data name="InvalidOrRevokedSessionKey" xml:space="preserve">
+    <value>مفتاح الجلسة غير صالح أو تم إبطاله</value>
+  </data>
 </root>

@@ -6,6 +6,7 @@ namespace ChatApp.Domain.Repositories.Contracts
     {
         Task AddAsync(Session session);
         Task<Session?> GetByKeyHashAsync(string keyHash);
+        Task<string?> GetKeyHashByUserIdAsync(Guid userId);
         Task RevokeAsync(string keyHash);
     }
 }

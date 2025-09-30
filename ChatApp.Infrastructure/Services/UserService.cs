@@ -29,11 +29,14 @@ namespace ChatApp.Infrastructure.Services
         #region Functions
         public async Task<string> AddUserAsync(User user, IFormFile file)
         {
-            var context = _httpContextAccessor.HttpContext!.Request;
-            var baseUrl = context.Scheme + "://" + context.Host;
-            var imageUrl = await _fileService.UploadImageAsync("Users", file);
-            if (imageUrl == "FailedToUploadImage") return "FailedToUploadImage";
-            user.ProfileImageUrl = baseUrl + imageUrl;
+            if (file != null)
+            {
+                var context = _httpContextAccessor.HttpContext!.Request;
+                var baseUrl = context.Scheme + "://" + context.Host;
+                var imageUrl = await _fileService.UploadImageAsync("Users", file);
+                if (imageUrl == "FailedToUploadImage") return "FailedToUploadImage";
+                user.ProfileImageUrl = baseUrl + imageUrl;
+            }
             try
             {
                 await _userRepository.AddAsync(user);
@@ -60,10 +63,19 @@ namespace ChatApp.Infrastructure.Services
                                         .FirstOrDefaultAsync();
         }
 
-        public async Task<string> UpdateUserAsync(User user)
+        public async Task<string> UpdateUserAsync(User user, IFormFile file)
         {
+            if (file != null)
+            {
+                var context = _httpContextAccessor.HttpContext!.Request;
+                var baseUrl = context.Scheme + "://" + context.Host;
+                var imageUrl = await _fileService.UploadImageAsync("Users", file);
+                if (imageUrl == "FailedToUploadImage") return "FailedToUploadImage";
+                user.ProfileImageUrl = baseUrl + imageUrl;
+            }
             try
             {
+                user.ProfileImageUrl = null;
                 await _userRepository.UpdateAsync(user);
                 return "Success";
             }

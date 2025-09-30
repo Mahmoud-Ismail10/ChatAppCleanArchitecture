@@ -15,6 +15,7 @@
             public const string VerifyOtp = Prefix + "verifyOtp";
             public const string Register = Prefix + "register";
             public const string CreateSession = Prefix + "createSession";
+            public const string Logout = Prefix + "logout";
         }
 
         public static class ChatMember

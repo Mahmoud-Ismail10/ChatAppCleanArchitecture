@@ -8,6 +8,6 @@ namespace ChatApp.Application.Services.Contracts
         Task<string> AddUserAsync(User user, IFormFile file);
         Task<User?> GetUserByIdAsync(Guid userId);
         Task<User?> GetUserByPhoneNumberAsync(string phoneNumber);
-        Task<string> UpdateUserAsync(User user);
+        Task<string> UpdateUserAsync(User user, IFormFile file);
     }
 }

@@ -36,5 +36,12 @@ namespace ChatApp.Infrastructure.Repositories
                 await _dbContext.SaveChangesAsync();
             }
         }
+
+        public async Task<string?> GetKeyHashByUserIdAsync(Guid userId)
+        {
+            var session = await _dbContext.Sessions.FirstOrDefaultAsync(s => s.UserId == userId);
+            if (session != null) return session.KeyHash;
+            return null;
+        }
     }
 }

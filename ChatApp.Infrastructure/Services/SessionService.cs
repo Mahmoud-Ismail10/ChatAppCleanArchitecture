@@ -32,6 +32,25 @@ namespace ChatApp.Infrastructure.Services
                 return "Failed";
             }
         }
+
+        public async Task<string> RevokeSessionAsync(string keyHash)
+        {
+            try
+            {
+                await _sessionRepository.RevokeAsync(keyHash);
+                return "Success";
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error in revoked session : {ErrorMessage}", ex.InnerException?.Message ?? ex.Message);
+                return "Failed";
+            }
+        }
+
+        public async Task<string?> GetKeyHashByUserIdAsync(Guid userId)
+        {
+            return await _sessionRepository.GetKeyHashByUserIdAsync(userId);
+        }
         #endregion
     }
 }
