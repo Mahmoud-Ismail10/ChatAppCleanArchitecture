@@ -46,6 +46,7 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Handlers
                 string? chatName;
                 string? chatImageUrl;
                 bool? isOnline = null;
+                Guid? chatOtherMemberId = null;
 
                 var unreadCount = await _messageService.CountAsync(m => m.SentAt > cm!.LastReadMessageAt);
 
@@ -57,11 +58,13 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Handlers
                 else
                 {
                     var otherMember = await _chatMemberService.GetAnotherUserInSameChatAsync(currentUserId, cm.Chat.Id);
+                    chatOtherMemberId = otherMember!.Id;
                     isOnline = _onlineUserService.IsUserOnline(otherMember!.UserId);
                     chatName = otherMember?.User?.Name;
                     chatImageUrl = otherMember?.User?.ProfileImageUrl;
                 }
                 return new GetAllChatsMemberResponse(
+                    chatOtherMemberId,
                     cm.Id,
                     cm.Chat.Id,
                     cm.Chat.IsGroup,

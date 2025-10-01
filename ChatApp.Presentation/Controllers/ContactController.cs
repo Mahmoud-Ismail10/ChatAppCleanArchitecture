@@ -23,5 +23,12 @@ namespace ChatApp.Presentation.Controllers
             var result = await Mediator.Send(new GetAllContactsQuery());
             return NewResult(result);
         }
+
+        [HttpGet(Router.Contact.ViewContact)]
+        public async Task<IActionResult> ViewContact([FromQuery] ViewContactQuery query)
+        {
+            var result = await Mediator.Send(query);
+            return NewResult(result);
+        }
     }
 }

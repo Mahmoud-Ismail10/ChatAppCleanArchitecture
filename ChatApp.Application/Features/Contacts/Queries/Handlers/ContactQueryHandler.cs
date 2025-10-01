@@ -9,21 +9,28 @@ using Microsoft.Extensions.Localization;
 namespace ChatApp.Application.Features.Contacts.Queries.Handlers
 {
     public class ContactQueryHandler : ApiResponseHandler,
-        IRequestHandler<GetAllContactsQuery, ApiResponse<List<GetAllContactsResponse>>>
+        IRequestHandler<GetAllContactsQuery, ApiResponse<List<GetAllContactsResponse>>>,
+        IRequestHandler<ViewContactQuery, ApiResponse<ViewContactResponse>>
     {
         #region Fields
+        private readonly IUserService _userService;
         private readonly IContactService _contactService;
+        private readonly IChatMemberService _chatMemberService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IStringLocalizer<SharedResources> _stringLocalizer;
         #endregion
 
         #region Constructors
         public ContactQueryHandler(
+            IUserService userService,
             IContactService contactService,
+            IChatMemberService chatMemberService,
             ICurrentUserService currentUserService,
             IStringLocalizer<SharedResources> stringLocalizer) : base(stringLocalizer)
         {
+            _userService = userService;
             _contactService = contactService;
+            _chatMemberService = chatMemberService;
             _currentUserService = currentUserService;
             _stringLocalizer = stringLocalizer;
         }
@@ -44,6 +51,27 @@ namespace ChatApp.Application.Features.Contacts.Queries.Handlers
                 c.ContactUser!.PhoneNumber!,
                 c.ContactUser?.ProfileImageUrl
             )).ToList();
+            return Success(response);
+        }
+
+        public async Task<ApiResponse<ViewContactResponse>> Handle(ViewContactQuery request, CancellationToken cancellationToken)
+        {
+            var currentUserId = _currentUserService.GetUserId();
+            var chatMember = await _chatMemberService.GetChatMemberByIdAsync(request.ChatOtherMemberId);
+            if (chatMember == null) return NotFound<ViewContactResponse>(_stringLocalizer[SharedResourcesKeys.ChatMemberNotFound]);
+
+            var user = await _userService.GetUserByIdAsync(chatMember.UserId);
+            if (user == null) return NotFound<ViewContactResponse>(_stringLocalizer[SharedResourcesKeys.UserNotFound]);
+
+            var response = new ViewContactResponse(
+                chatMember.ChatId,
+                chatMember.Id,
+                user.Id,
+                user.Name!,
+                user.PhoneNumber!,
+                user.ProfileImageUrl,
+                user.LastSeenAt
+            );
             return Success(response);
         }
         #endregion
