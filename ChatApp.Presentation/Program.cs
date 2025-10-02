@@ -9,7 +9,6 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
-using Serilog;
 using System.Globalization;
 
 
@@ -75,10 +74,10 @@ builder.Services.AddCors(options =>
 #endregion
 
 #region Serilog
-Log.Logger = new LoggerConfiguration()
-              .ReadFrom.Configuration(builder.Configuration)
-              .CreateLogger();
-builder.Services.AddSerilog();
+//Log.Logger = new LoggerConfiguration()
+//              .ReadFrom.Configuration(builder.Configuration)
+//              .CreateLogger();
+//builder.Services.AddSerilog();
 #endregion
 
 var app = builder.Build();

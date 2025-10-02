@@ -1,4 +1,5 @@
-﻿using ChatApp.Application.Features.ChatsMember.Queries.Models;
+﻿using ChatApp.Application.Features.ChatsMember.Commands.Models;
+using ChatApp.Application.Features.ChatsMember.Queries.Models;
 using ChatApp.Domain.AppMetaData;
 using ChatApp.Presentation.Base;
 using Microsoft.AspNetCore.Authorization;
@@ -15,5 +16,13 @@ namespace ChatApp.Presentation.Controllers
             var result = await Mediator.Send(new GetAllChatsMemberQuery());
             return NewResult(result);
         }
+
+        [HttpDelete(Router.ChatMember.DeleteForMe)]
+        public async Task<IActionResult> DeleteForMe([FromRoute] Guid id)
+        {
+            var result = await Mediator.Send(new DeleteChatForMeCommand(id));
+            return NewResult(result);
+        }
     }
 }
+

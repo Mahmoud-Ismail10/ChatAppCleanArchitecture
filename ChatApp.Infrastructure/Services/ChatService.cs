@@ -23,7 +23,7 @@ namespace ChatApp.Infrastructure.Services
         public async Task<Chat?> GetChatWithMessagesAsync(Guid chatId)
         {
             return await _chatRepository.GetTableNoTracking()
-                                        .Include(c => c.Messages.OrderBy(m => m.SentAt))
+                                        .Include(c => c.Messages)
                                         .Where(c => c.Id == chatId)
                                         .FirstOrDefaultAsync();
         }
@@ -38,6 +38,20 @@ namespace ChatApp.Infrastructure.Services
             catch (Exception ex)
             {
                 Log.Error("Error in creating new chat : {Message}", ex.InnerException?.Message ?? ex.Message);
+                return "Failed";
+            }
+        }
+
+        public async Task<string> DeleteChatAsync(Chat chat)
+        {
+            try
+            {
+                await _chatRepository.DeleteAsync(chat);
+                return "Success";
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error in deleting chat : {Message}", ex.InnerException?.Message ?? ex.Message);
                 return "Failed";
             }
         }

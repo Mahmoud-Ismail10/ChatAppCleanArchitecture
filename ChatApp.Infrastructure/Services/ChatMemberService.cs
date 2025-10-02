@@ -70,15 +70,6 @@ namespace ChatApp.Infrastructure.Services
                                               .FirstOrDefaultAsync();
         }
 
-        public async Task<bool> IsMemberOfChatAsync(Guid userId, Guid chatId)
-        {
-            var result = await _chatMemberRepository.GetTableNoTracking()
-                                                    .Where(cm => cm.UserId == userId && cm.ChatId == chatId)
-                                                    .FirstOrDefaultAsync();
-            if (result == null) return false;
-            return true;
-        }
-
         public async Task MarkAsReadAsync(Guid chatMemberId)
         {
             try
@@ -86,7 +77,7 @@ namespace ChatApp.Infrastructure.Services
                 var chatMember = await _chatMemberRepository.GetTableAsTracking()
                         .FirstOrDefaultAsync(cm => cm.Id == chatMemberId);
 
-                if (chatMember == null) throw new Exception(_stringLocalizer[SharedResourcesKeys.ChatMemberNotFound]);
+                if (chatMember == null) throw new Exception(_stringLocalizer[SharedResourcesKeys.ChatNotFound]);
 
                 chatMember.LastReadMessageAt = DateTimeOffset.UtcNow.ToLocalTime();
                 await _chatMemberRepository.UpdateAsync(chatMember);
@@ -100,7 +91,34 @@ namespace ChatApp.Infrastructure.Services
         public async Task<ChatMember?> GetChatMemberByIdAsync(Guid chatMemberId)
         {
             return await _chatMemberRepository.GetTableNoTracking()
+                                              .Include(cm => cm.Chat)
                                               .FirstOrDefaultAsync(cm => cm.Id == chatMemberId);
+        }
+
+        public async Task<string> SoftDeleteChatMemberAsync(ChatMember chatMember)
+        {
+            try
+            {
+                chatMember.IsDeleted = true;
+                chatMember.DeletedAt = DateTimeOffset.UtcNow.ToLocalTime();
+                await _chatMemberRepository.UpdateAsync(chatMember);
+                return "Success";
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error in soft deleting chat member: {Message}", ex.InnerException?.Message ?? ex.Message);
+                return "Failed";
+            }
+        }
+
+        public async Task<bool> IsDeletedFromAllMembersAsync(Guid chatId)
+        {
+            var chatMembers = await _chatMemberRepository.GetTableNoTracking()
+                                                        .Where(cm => cm.ChatId == chatId)
+                                                        .ToListAsync();
+            if (chatMembers.All(cm => cm.IsDeleted))
+                return true;
+            return false;
         }
         #endregion
     }

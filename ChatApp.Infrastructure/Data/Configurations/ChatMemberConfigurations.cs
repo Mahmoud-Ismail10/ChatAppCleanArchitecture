@@ -28,7 +28,15 @@ namespace ChatApp.Infrastructure.Data.Configurations
                 .IsRequired();
 
             builder.Property(cm => cm.IsPinned)
+                .HasDefaultValue(false)
                 .IsRequired();
+
+            builder.Property(cm => cm.IsDeleted)
+                .HasDefaultValue(false)
+                .IsRequired();
+
+            builder.Property(cm => cm.DeletedAt)
+                .IsRequired(false);
 
             builder.Property(cm => cm.LastReadMessageAt)
                 .IsRequired(false);

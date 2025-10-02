@@ -17,6 +17,7 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
         private readonly IChatService _chatService;
         private readonly IMessageService _messageService;
         private readonly IMessageNotifier _messageNotifier;
+        private readonly IChatMemberService _chatMemberService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IStringLocalizer<SharedResources> _stringLocalizer;
         #endregion
@@ -26,12 +27,14 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
             IChatService chatService,
             IMessageService messageService,
             IMessageNotifier messageNotifier,
+            IChatMemberService chatMemberService,
             ICurrentUserService currentUserService,
             IStringLocalizer<SharedResources> stringLocalizer) : base(stringLocalizer)
         {
             _chatService = chatService;
             _messageService = messageService;
             _messageNotifier = messageNotifier;
+            _chatMemberService = chatMemberService;
             _currentUserService = currentUserService;
             _stringLocalizer = stringLocalizer;
         }
@@ -55,6 +58,17 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                 };
                 var result1 = await _chatService.CreateChatAsync(chat);
                 if (result1 != "Success") return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToCreateChat]);
+            }
+            else if (chat.ChatMembers.Any(m => m.IsDeleted))
+            {
+                var deletedMember = chat.ChatMembers.FirstOrDefault(m => m.IsDeleted);
+                if (deletedMember != null)
+                {
+                    deletedMember.IsDeleted = false;
+
+                    var result = await _chatMemberService.UpdateChatMemberAsync(deletedMember);
+                    if (result != "Success") return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToCreateChat]);
+                }
             }
             string? fileUrl = null;
             MessageType messageType = MessageType.Text;

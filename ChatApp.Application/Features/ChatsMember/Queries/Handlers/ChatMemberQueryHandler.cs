@@ -8,7 +8,7 @@ using Microsoft.Extensions.Localization;
 
 namespace ChatApp.Application.Features.ChatsMember.Queries.Handlers
 {
-    public class ChatMemberCommandHandler : ApiResponseHandler,
+    public class ChatMemberQueryHandler : ApiResponseHandler,
         IRequestHandler<GetAllChatsMemberQuery, ApiResponse<List<GetAllChatsMemberResponse>>>
     {
         #region Fields
@@ -20,7 +20,7 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Handlers
         #endregion
 
         #region Constructors
-        public ChatMemberCommandHandler(IStringLocalizer<SharedResources> stringLocalizer,
+        public ChatMemberQueryHandler(IStringLocalizer<SharedResources> stringLocalizer,
             ICurrentUserService currentUserService,
             IOnlineUserService onlineUserService,
             IChatMemberService chatMemberService,
@@ -41,14 +41,16 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Handlers
             var chatMembers = await _chatMemberService.GetAllChatsMemberAsync(currentUserId);
             if (chatMembers == null || !chatMembers.Any())
                 return NotFound<List<GetAllChatsMemberResponse>>(_stringLocalizer[SharedResourcesKeys.NoChatsFound]);
-            var responseTasks = chatMembers.Select(async cm =>
+            var responseTasks = chatMembers.Where(cm => !cm!.IsDeleted)
+                                           .Select(async cm =>
             {
                 string? chatName;
                 string? chatImageUrl;
                 bool? isOnline = null;
                 Guid? chatOtherMemberId = null;
 
-                var unreadCount = await _messageService.CountAsync(m => m.SentAt > cm!.LastReadMessageAt);
+                var unreadCount = await _messageService.CountAsync(
+                    m => cm!.LastReadMessageAt == null || m.SentAt > cm.LastReadMessageAt.Value);
 
                 if (cm!.Chat!.IsGroup)
                 {
@@ -76,7 +78,10 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Handlers
                     cm.Chat.LastMessage?.SentAt,
                     unreadCount);
             }).ToList();
+
             var responses = (await Task.WhenAll(responseTasks)).ToList();
+            if (!responses.Any())
+                return NotFound<List<GetAllChatsMemberResponse>>(_stringLocalizer[SharedResourcesKeys.NoChatsFound]);
             return Success(responses);
         }
         #endregion

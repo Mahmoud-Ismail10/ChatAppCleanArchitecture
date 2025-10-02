@@ -8,8 +8,9 @@ namespace ChatApp.Application.Services.Contracts
         Task<IReadOnlyList<ChatMember?>> GetAllChatsMemberAsync(Guid userId);
         Task<ChatMember?> GetAnotherUserInSameChatAsync(Guid currentUserId, Guid chatId);
         Task<ChatMember?> GetChatMemberByIdAsync(Guid chatMemberId);
-        Task<bool> IsMemberOfChatAsync(Guid userId, Guid chatId);
+        Task<bool> IsDeletedFromAllMembersAsync(Guid chatId);
         Task MarkAsReadAsync(Guid chatMemberId);
+        Task<string> SoftDeleteChatMemberAsync(ChatMember chatMember);
         Task<string> UpdateChatMemberAsync(ChatMember chatMember);
     }
 }

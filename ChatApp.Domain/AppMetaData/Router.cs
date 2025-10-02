@@ -22,6 +22,7 @@
         {
             public const string Prefix = Rule + "chatsMember/";
             public const string GetAll = Prefix + "getAll";
+            public const string DeleteForMe = Prefix + "deleteForMe/" + SingleRoute;
         }
 
         public static class Contact

@@ -58,7 +58,7 @@ namespace ChatApp.Application.Features.Contacts.Queries.Handlers
         {
             var currentUserId = _currentUserService.GetUserId();
             var chatMember = await _chatMemberService.GetChatMemberByIdAsync(request.ChatOtherMemberId);
-            if (chatMember == null) return NotFound<ViewContactResponse>(_stringLocalizer[SharedResourcesKeys.ChatMemberNotFound]);
+            if (chatMember == null) return NotFound<ViewContactResponse>(_stringLocalizer[SharedResourcesKeys.ChatNotFound]);
 
             var user = await _userService.GetUserByIdAsync(chatMember.UserId);
             if (user == null) return NotFound<ViewContactResponse>(_stringLocalizer[SharedResourcesKeys.UserNotFound]);

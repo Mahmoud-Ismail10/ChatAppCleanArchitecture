@@ -246,9 +246,6 @@
   <data name="AccessDenied" xml:space="preserve">
     <value>تم رفض الوصول</value>
   </data>
-  <data name="ChatMemberNotFound" xml:space="preserve">
-    <value>لم يتم العثور علي دردشة المستخدم</value>
-  </data>
   <data name="NoActiveSessionFound" xml:space="preserve">
     <value>لم يتم العثور على أي جلسة نشطة</value>
   </data>
@@ -269,5 +266,11 @@
   </data>
   <data name="InvalidOrRevokedSessionKey" xml:space="preserve">
     <value>مفتاح الجلسة غير صالح أو تم إبطاله</value>
+  </data>
+  <data name="ChatDeletedForMeSuccessfully" xml:space="preserve">
+    <value>تم حذف الدردشة بالنسبة لي بنجاح</value>
+  </data>
+  <data name="FailedToDeleteChat" xml:space="preserve">
+    <value>فشل في حذف الدردشة</value>
   </data>
 </root>

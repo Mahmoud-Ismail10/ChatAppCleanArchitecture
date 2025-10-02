@@ -38,11 +38,12 @@ namespace ChatApp.Application.Features.Chats.Queries.Handlers
         public async Task<ApiResponse<GetChatWithMessagesResponse>> Handle(GetChatWithMessagesQuery request, CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.GetUserId();
-            var isAuthorized = await _chatMemberService.IsMemberOfChatAsync(currentUserId, request.ChatId);
-            if (!isAuthorized) return Unauthorized<GetChatWithMessagesResponse>(_stringLocalizer[SharedResourcesKeys.AccessDenied]);
-
             var chat = await _chatService.GetChatWithMessagesAsync(request.ChatId);
             if (chat == null) return NotFound<GetChatWithMessagesResponse>(_stringLocalizer[SharedResourcesKeys.ChatNotFound]);
+
+            var chatMember = await _chatMemberService.GetChatMemberByIdAsync(request.ChatMemberId);
+            if (chatMember == null || chatMember.UserId != currentUserId)
+                return Unauthorized<GetChatWithMessagesResponse>(_stringLocalizer[SharedResourcesKeys.AccessDenied]);
 
             string? chatName;
             string? chatImageUrl;
@@ -55,27 +56,36 @@ namespace ChatApp.Application.Features.Chats.Queries.Handlers
             else
             {
                 var otherMember = await _chatMemberService.GetAnotherUserInSameChatAsync(currentUserId, chat.Id);
+                if (otherMember == null) return NotFound<GetChatWithMessagesResponse>(_stringLocalizer[SharedResourcesKeys.ChatNotFound]);
                 chatName = otherMember?.User?.Name;
                 chatImageUrl = otherMember?.User?.ProfileImageUrl;
             }
+
+            var messagesQuery = chat.Messages.AsQueryable();
+
+            if (chatMember.DeletedAt.HasValue)
+                messagesQuery = messagesQuery.Where(m => m.SentAt > chatMember.DeletedAt.Value).AsQueryable();
+
+            var messages = messagesQuery
+                .OrderBy(m => m.SentAt)
+                .Select(m => new MessageDto(
+                    m.Id,
+                    m.SenderId,
+                    m.Type,
+                    m.Content,
+                    m.SentAt
+                )).ToList();
 
             var response = new GetChatWithMessagesResponse(
                 chat.Id,
                 chat.IsGroup,
                 chatName,
                 chatImageUrl,
-                chat.Messages.Select(m => new MessageDto(
-                    m.Id,
-                    m.SenderId,
-                    m.Type,
-                    m.Content,
-                    m.SentAt
-                )).ToList()
+                messages
             );
-            var chatMember = await _chatMemberService.GetChatMemberByIdAsync(request.ChatMemberId);
-            if (chatMember == null) return NotFound<GetChatWithMessagesResponse>(_stringLocalizer[SharedResourcesKeys.ChatMemberNotFound]);
             await _chatMemberService.MarkAsReadAsync(request.ChatMemberId);
             await _messageNotifier.NotifyChatReadAsync(chatMember.ChatId, currentUserId);
+
             return Success(response);
         }
         #endregion

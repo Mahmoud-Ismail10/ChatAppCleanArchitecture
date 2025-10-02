@@ -45,7 +45,6 @@
         public const string FailedToSendMessage = "FailedToSendMessage";
         public const string FailedToUpdateChat = "FailedToUpdateChat";
         public const string AccessDenied = "AccessDenied";
-        public const string ChatMemberNotFound = "ChatMemberNotFound";
         public const string FailedToLogout = "FailedToLogout";
         public const string LoggedOutSuccessfully = "LoggedOutSuccessfully";
         public const string LoginSuccessfully = "LoginSuccessfully";
@@ -53,6 +52,8 @@
         public const string MissingAuthorizationHeader = "MissingAuthorizationHeader";
         public const string InvalidScheme = "InvalidScheme";
         public const string InvalidOrRevokedSessionKey = "InvalidOrRevokedSessionKey";
+        public const string ChatDeletedForMeSuccessfully = "ChatDeletedForMeSuccessfully";
+        public const string FailedToDeleteChat = "FailedToDeleteChat";
 
     }
 }

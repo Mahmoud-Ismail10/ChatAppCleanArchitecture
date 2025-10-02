@@ -8,7 +8,7 @@ using Microsoft.Extensions.Localization;
 
 namespace ChatApp.Application.Features.Users.Queries.Handlers
 {
-    public class UserCommandHandler : ApiResponseHandler,
+    public class UserQueryHandler : ApiResponseHandler,
         IRequestHandler<GetUserStatusQuery, ApiResponse<GetUserStatusResponse>>
     {
         #region Fields
@@ -18,7 +18,7 @@ namespace ChatApp.Application.Features.Users.Queries.Handlers
         #endregion
 
         #region Constructors
-        public UserCommandHandler(IStringLocalizer<SharedResources> stringLocalizer,
+        public UserQueryHandler(IStringLocalizer<SharedResources> stringLocalizer,
             IOnlineUserService onlineUserService,
             IUserService userService) : base(stringLocalizer)
         {

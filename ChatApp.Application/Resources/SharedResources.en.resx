@@ -246,9 +246,6 @@
   <data name="AccessDenied" xml:space="preserve">
     <value>Access denied</value>
   </data>
-  <data name="ChatMemberNotFound" xml:space="preserve">
-    <value>Chat member not found</value>
-  </data>
   <data name="NoActiveSessionFound" xml:space="preserve">
     <value>No active session found</value>
   </data>
@@ -269,5 +266,11 @@
   </data>
   <data name="InvalidOrRevokedSessionKey" xml:space="preserve">
     <value>Invalid or revoked session key</value>
+  </data>
+  <data name="ChatDeletedForMeSuccessfully" xml:space="preserve">
+    <value>Chat deleted for me successfully</value>
+  </data>
+  <data name="FailedToDeleteChat" xml:space="preserve">
+    <value>Failed to delete chat</value>
   </data>
 </root>
