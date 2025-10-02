@@ -50,6 +50,8 @@
         {
             public const string Prefix = Rule + "users/";
             public const string GetUserStatus = Prefix + "getUserStatus/" + SingleRoute;
+            public const string GetCurrentUser = Prefix + "getCurrentUser";
+            public const string GetCurrentUserId = Prefix + "getCurrentUserId/";
         }
     }
 }

@@ -9,20 +9,25 @@ using Microsoft.Extensions.Localization;
 namespace ChatApp.Application.Features.Users.Queries.Handlers
 {
     public class UserQueryHandler : ApiResponseHandler,
-        IRequestHandler<GetUserStatusQuery, ApiResponse<GetUserStatusResponse>>
+        IRequestHandler<GetUserStatusQuery, ApiResponse<GetUserStatusResponse>>,
+        IRequestHandler<GetCurrentUserQuery, ApiResponse<GetCurrentUserResponse>>,
+        IRequestHandler<GetCurrentUserIdQuery, ApiResponse<Guid>>
     {
         #region Fields
         private readonly IStringLocalizer<SharedResources> _stringLocalizer;
+        private readonly ICurrentUserService _currentUserService;
         private readonly IOnlineUserService _onlineUserService;
         private readonly IUserService _userService;
         #endregion
 
         #region Constructors
         public UserQueryHandler(IStringLocalizer<SharedResources> stringLocalizer,
+            ICurrentUserService currentUserService,
             IOnlineUserService onlineUserService,
             IUserService userService) : base(stringLocalizer)
         {
             _stringLocalizer = stringLocalizer;
+            _currentUserService = currentUserService;
             _onlineUserService = onlineUserService;
             _userService = userService;
         }
@@ -36,6 +41,27 @@ namespace ChatApp.Application.Features.Users.Queries.Handlers
             if (user == null) return NotFound<GetUserStatusResponse>(_stringLocalizer[SharedResourcesKeys.UserNotFound]);
             var userStatus = new GetUserStatusResponse(isOnline, user!.LastSeenAt);
             return Success(userStatus);
+        }
+
+        public Task<ApiResponse<Guid>> Handle(GetCurrentUserIdQuery request, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(Success(_currentUserService.GetUserId()));
+        }
+
+        public async Task<ApiResponse<GetCurrentUserResponse>> Handle(GetCurrentUserQuery request, CancellationToken cancellationToken)
+        {
+            var currentUserId = _currentUserService.GetUserId();
+            var currentUser = await _userService.GetUserByIdAsync(currentUserId);
+            if (currentUser == null) return NotFound<GetCurrentUserResponse>(_stringLocalizer[SharedResourcesKeys.UserNotFound]);
+            var currentUserResponse = new GetCurrentUserResponse(
+                currentUser.Id,
+                currentUser.Name,
+                currentUser.Email,
+                currentUser.PhoneNumber,
+                currentUser.CreatedAt,
+                currentUser.ProfileImageUrl
+            );
+            return Success(currentUserResponse);
         }
         #endregion
     }

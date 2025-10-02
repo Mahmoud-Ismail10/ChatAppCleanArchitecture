@@ -15,5 +15,19 @@ namespace ChatApp.Presentation.Controllers
             var result = await Mediator.Send(new GetUserStatusQuery(id));
             return NewResult(result);
         }
+
+        [HttpGet(Router.User.GetCurrentUser)]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var result = await Mediator.Send(new GetCurrentUserQuery());
+            return NewResult(result);
+        }
+
+        [HttpGet(Router.User.GetCurrentUserId)]
+        public async Task<IActionResult> GetCurrentUserId()
+        {
+            var result = await Mediator.Send(new GetCurrentUserIdQuery());
+            return NewResult(result);
+        }
     }
 }
