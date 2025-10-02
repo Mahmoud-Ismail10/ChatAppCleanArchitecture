@@ -7,6 +7,7 @@ using ChatApp.Domain.Entities;
 using ChatApp.Domain.Enums;
 using MediatR;
 using Microsoft.Extensions.Localization;
+using Serilog;
 
 namespace ChatApp.Application.Features.Messages.Commands.Handlers
 {
@@ -18,6 +19,7 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
         private readonly IMessageService _messageService;
         private readonly IMessageNotifier _messageNotifier;
         private readonly IChatMemberService _chatMemberService;
+        private readonly ITransactionService _transactionService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IStringLocalizer<SharedResources> _stringLocalizer;
         #endregion
@@ -28,6 +30,7 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
             IMessageService messageService,
             IMessageNotifier messageNotifier,
             IChatMemberService chatMemberService,
+            ITransactionService transactionService,
             ICurrentUserService currentUserService,
             IStringLocalizer<SharedResources> stringLocalizer) : base(stringLocalizer)
         {
@@ -35,6 +38,7 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
             _messageService = messageService;
             _messageNotifier = messageNotifier;
             _chatMemberService = chatMemberService;
+            _transactionService = transactionService;
             _currentUserService = currentUserService;
             _stringLocalizer = stringLocalizer;
         }
@@ -43,99 +47,116 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
         #region Handle Functions
         public async Task<ApiResponse<string>> Handle(SendMessageToContactCommand request, CancellationToken cancellationToken)
         {
-            var currentUserId = _currentUserService.GetUserId();
-            var chat = await _chatService.GetChatBetweenUsersAsync(currentUserId, request.ReceiverId);
-            if (chat == null)
+            using var transaction = await _transactionService.BeginTransactionAsync();
+
+            try
             {
-                chat = new Chat
+                var currentUserId = _currentUserService.GetUserId();
+                var chat = await _chatService.GetChatBetweenUsersAsync(currentUserId, request.ReceiverId);
+                if (chat == null)
                 {
-                    CreatedAt = DateTimeOffset.UtcNow.ToLocalTime(),
-                    ChatMembers = new List<ChatMember>
+                    chat = new Chat
+                    {
+                        CreatedAt = DateTimeOffset.UtcNow.ToLocalTime(),
+                        ChatMembers = new List<ChatMember>
                     {
                         new ChatMember { UserId = currentUserId, Role = Role.Member, JoinedAt = DateTimeOffset.UtcNow.ToLocalTime() },
                         new ChatMember { UserId = request.ReceiverId, Role = Role.Member, JoinedAt = DateTimeOffset.UtcNow.ToLocalTime() }
                     }
-                };
-                var result1 = await _chatService.CreateChatAsync(chat);
-                if (result1 != "Success") return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToCreateChat]);
-            }
-            else if (chat.ChatMembers.Any(m => m.IsDeleted))
-            {
-                var deletedMember = chat.ChatMembers.FirstOrDefault(m => m.IsDeleted);
-                if (deletedMember != null)
-                {
-                    deletedMember.IsDeleted = false;
-
-                    var result = await _chatMemberService.UpdateChatMemberAsync(deletedMember);
-                    if (result != "Success") return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToCreateChat]);
-                }
-            }
-            string? fileUrl = null;
-            MessageType messageType = MessageType.Text;
-
-            if (request.FilePath != null)
-            {
-                var fileName = Guid.NewGuid() + Path.GetExtension(request.FilePath.FileName);
-                var filePath = Path.Combine("wwwroot/Files", fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await request.FilePath.CopyToAsync(stream, cancellationToken);
-                }
-
-                fileUrl = "/Files/" + fileName;
-                messageType = request.FilePath == null ? MessageType.Text
-                    : request.FilePath.ContentType.ToLower() switch
-                    {
-                        var ct when ct.StartsWith("image/") => MessageType.Image,
-                        var ct when ct.StartsWith("audio/") => MessageType.Audio,
-                        var ct when ct.StartsWith("video/") => MessageType.Video,
-                        "application/pdf" => MessageType.PDF,
-                        _ => MessageType.Document
                     };
+                    var result1 = await _chatService.CreateChatAsync(chat);
+                    if (result1 != "Success") return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToCreateChat]);
+                }
+                else if (chat.ChatMembers.Any(m => m.IsDeleted))
+                {
+                    var deletedMember = chat.ChatMembers.FirstOrDefault(m => m.IsDeleted);
+                    if (deletedMember != null)
+                    {
+                        deletedMember.IsDeleted = false;
+
+                        var result = await _chatMemberService.UpdateChatMemberAsync(deletedMember);
+                        if (result != "Success") return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToCreateChat]);
+                    }
+                }
+                string? fileUrl = null;
+                MessageType messageType = MessageType.Text;
+
+                if (request.FilePath != null)
+                {
+                    var fileName = Guid.NewGuid() + Path.GetExtension(request.FilePath.FileName);
+                    var filePath = Path.Combine("wwwroot/Files", fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await request.FilePath.CopyToAsync(stream, cancellationToken);
+                    }
+
+                    fileUrl = "/Files/" + fileName;
+                    messageType = request.FilePath == null ? MessageType.Text
+                        : request.FilePath.ContentType.ToLower() switch
+                        {
+                            var ct when ct.StartsWith("image/") => MessageType.Image,
+                            var ct when ct.StartsWith("audio/") => MessageType.Audio,
+                            var ct when ct.StartsWith("video/") => MessageType.Video,
+                            "application/pdf" => MessageType.PDF,
+                            _ => MessageType.Document
+                        };
+                }
+
+                var message = new Message
+                {
+                    ChatId = chat.Id,
+                    SenderId = currentUserId,
+                    Content = request.MessageContent,
+                    FilePath = fileUrl,
+                    Type = messageType,
+                    Duration = request.Duration,
+                    SentAt = DateTimeOffset.UtcNow.ToLocalTime(),
+                };
+
+                var messageMapper = new SendMessageDto
+                (
+                    Guid.NewGuid(),
+                    message.ChatId,
+                    message.SenderId,
+                    message.Type,
+                    message.Content,
+                    message.FilePath,
+                    message.Duration,
+                    message.SentAt,
+                    false,
+                    false
+                );
+
+                var result3 = await _messageService.AddMessageAsync(message);
+                if (result3 == "Success")
+                {
+                    chat.LastMessage = message;
+                    chat.LastMessageId = message.Id;
+                    var result2 = await _chatService.UpdateChatAsync(chat);
+                    if (result2 != "Success")
+                    {
+                        await _transactionService.RollBackAsync();
+                        return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToUpdateChat]);
+                    }
+
+                    // Broadcast the message to the receiver using SignalR
+                    await _messageNotifier.NotifyMessageToContactAsync(messageMapper);
+                    // Increment unread message count for the receiver
+                    await _messageNotifier.NotifyUnreadIncrementAsync(chat.Id);
+
+                    await _transactionService.CommitAsync();
+                    return Success<string>(_stringLocalizer[SharedResourcesKeys.MessageSentSuccessfully]);
+                }
+                await _transactionService.RollBackAsync();
+                return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToSendMessage]);
             }
-
-            var message = new Message
+            catch (Exception ex)
             {
-                ChatId = chat.Id,
-                SenderId = currentUserId,
-                Content = request.MessageContent,
-                FilePath = fileUrl,
-                Type = messageType,
-                Duration = request.Duration,
-                SentAt = DateTimeOffset.UtcNow.ToLocalTime(),
-            };
-
-            var messageMapper = new SendMessageDto
-            (
-                Guid.NewGuid(),
-                message.ChatId,
-                message.SenderId,
-                message.Type,
-                message.Content,
-                message.FilePath,
-                message.Duration,
-                message.SentAt,
-                false,
-                false
-            );
-
-            var result3 = await _messageService.AddMessageAsync(message);
-            if (result3 == "Success")
-            {
-                chat.LastMessage = message;
-                chat.LastMessageId = message.Id;
-                var result2 = await _chatService.UpdateChatAsync(chat);
-                if (result2 != "Success") return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToUpdateChat]);
-
-                // Broadcast the message to the receiver using SignalR
-                await _messageNotifier.NotifyMessageToContactAsync(messageMapper);
-                // Increment unread message count for the receiver
-                await _messageNotifier.NotifyUnreadIncrementAsync(chat.Id);
-
-                return Success<string>(_stringLocalizer[SharedResourcesKeys.MessageSentSuccessfully]);
+                await _transactionService.RollBackAsync();
+                Log.Error(ex, "An error occurred while sending message from user {UserId} to user {ReceiverId}", _currentUserService.GetUserId(), request.ReceiverId);
+                return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToSendMessage]);
             }
-            return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToSendMessage]);
         }
         #endregion
     }

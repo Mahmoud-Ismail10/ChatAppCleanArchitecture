@@ -1,7 +1,6 @@
 ﻿using ChatApp.Domain.Repositories.Contracts;
 using ChatApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace ChatApp.Infrastructure.Repositories
 {
@@ -61,21 +60,6 @@ namespace ChatApp.Infrastructure.Repositories
         public async Task SaveChangesAsync()
         {
             await _dbContext.SaveChangesAsync();
-        }
-
-        public async Task<IDbContextTransaction> BeginTransactionAsync()
-        {
-            return await _dbContext.Database.BeginTransactionAsync();
-        }
-
-        public async Task CommitAsync()
-        {
-            await _dbContext.Database.CommitTransactionAsync();
-        }
-
-        public async Task RollBackAsync()
-        {
-            await _dbContext.Database.RollbackTransactionAsync();
         }
 
         public IQueryable<T> GetTableAsTracking()

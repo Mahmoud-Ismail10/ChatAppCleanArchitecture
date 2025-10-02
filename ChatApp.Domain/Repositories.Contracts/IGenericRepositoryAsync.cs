@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-
-namespace ChatApp.Domain.Repositories.Contracts
+﻿namespace ChatApp.Domain.Repositories.Contracts
 {
     public interface IGenericRepositoryAsync<T> where T : class
     {
@@ -8,9 +6,6 @@ namespace ChatApp.Domain.Repositories.Contracts
         Task<T?> GetByIdAsync(Guid id);
         Task<IReadOnlyList<T?>> GetAllAsync();
         Task SaveChangesAsync();
-        Task<IDbContextTransaction> BeginTransactionAsync();
-        Task CommitAsync();
-        Task RollBackAsync();
         IQueryable<T> GetTableNoTracking();
         IQueryable<T> GetTableAsTracking();
         Task<T> AddAsync(T entity);

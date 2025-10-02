@@ -13,6 +13,7 @@ namespace ChatApp.Application.Features.ChatsMember.Commands.Handlers
         #region Fields
         private readonly IChatService _chatService;
         private readonly IChatMemberService _chatMemberService;
+        private readonly ITransactionService _transactionService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IStringLocalizer<SharedResources> _stringLocalizer;
         #endregion
@@ -21,11 +22,13 @@ namespace ChatApp.Application.Features.ChatsMember.Commands.Handlers
         public ChatMemberCommandHandler(
             IChatService chatService,
             IChatMemberService chatMemberService,
+            ITransactionService transactionService,
             ICurrentUserService currentUserService,
             IStringLocalizer<SharedResources> stringLocalizer) : base(stringLocalizer)
         {
             _chatService = chatService;
             _chatMemberService = chatMemberService;
+            _transactionService = transactionService;
             _currentUserService = currentUserService;
             _stringLocalizer = stringLocalizer;
         }
@@ -34,6 +37,8 @@ namespace ChatApp.Application.Features.ChatsMember.Commands.Handlers
         #region Handle Functions
         public async Task<ApiResponse<string>> Handle(DeleteChatForMeCommand request, CancellationToken cancellationToken)
         {
+            using var transaction = await _transactionService.BeginTransactionAsync();
+
             var currentUserId = _currentUserService.GetUserId();
             var chatMember = await _chatMemberService.GetChatMemberByIdAsync(request.ChatMemberId);
 
@@ -46,8 +51,13 @@ namespace ChatApp.Application.Features.ChatsMember.Commands.Handlers
             {
                 if (chatMember.Chat == null) return NotFound<string>(_stringLocalizer[SharedResourcesKeys.ChatNotFound]);
                 result = await _chatService.DeleteChatAsync(chatMember.Chat);
-                if (result != "Success") return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToDeleteChat]);
+                if (result != "Success")
+                {
+                    await _transactionService.RollBackAsync();
+                    return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToDeleteChat]);
+                }
             }
+            await _transactionService.CommitAsync();
             return Success<string>(_stringLocalizer[SharedResourcesKeys.ChatDeletedForMeSuccessfully]);
         }
         #endregion
