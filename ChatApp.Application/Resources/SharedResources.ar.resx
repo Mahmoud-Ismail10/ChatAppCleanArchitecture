@@ -273,4 +273,19 @@
   <data name="FailedToDeleteChat" xml:space="preserve">
     <value>فشل في حذف الدردشة</value>
   </data>
+  <data name="MessageId" xml:space="preserve">
+    <value>معرف الرسالة</value>
+  </data>
+  <data name="MessageNotFound" xml:space="preserve">
+    <value>لم يتم العثور على الرسالة</value>
+  </data>
+  <data name="UnauthorizedToDeleteMessage" xml:space="preserve">
+    <value>غير مصرح لك بحذف الرسالة</value>
+  </data>
+  <data name="MessageDeletedSuccessfully" xml:space="preserve">
+    <value>تم حذف الرسالة بنجاح</value>
+  </data>
+  <data name="FailedToDeleteMessage" xml:space="preserve">
+    <value>فشل في حذف الرسالة</value>
+  </data>
 </root>

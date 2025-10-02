@@ -273,4 +273,19 @@
   <data name="FailedToDeleteChat" xml:space="preserve">
     <value>Failed to delete chat</value>
   </data>
+  <data name="MessageId" xml:space="preserve">
+    <value>Message Id</value>
+  </data>
+  <data name="MessageNotFound" xml:space="preserve">
+    <value>Message not found</value>
+  </data>
+  <data name="UnauthorizedToDeleteMessage" xml:space="preserve">
+    <value>Unauthorized to delete message</value>
+  </data>
+  <data name="MessageDeletedSuccessfully" xml:space="preserve">
+    <value>Message deleted successfully</value>
+  </data>
+  <data name="FailedToDeleteMessage" xml:space="preserve">
+    <value>Failed to delete message</value>
+  </data>
 </root>

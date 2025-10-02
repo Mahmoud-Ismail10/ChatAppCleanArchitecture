@@ -18,6 +18,7 @@
         public const string Otp = "Otp";
         public const string UserId = "UserId";
         public const string ContactId = "ContactId";
+        public const string MessageId = "MessageId";
         public const string NotEmpty = "NotEmpty";
         public const string Required = "Required";
         public const string MaxLengthIs30 = "MaxLengthIs30";
@@ -54,6 +55,10 @@
         public const string InvalidOrRevokedSessionKey = "InvalidOrRevokedSessionKey";
         public const string ChatDeletedForMeSuccessfully = "ChatDeletedForMeSuccessfully";
         public const string FailedToDeleteChat = "FailedToDeleteChat";
+        public const string MessageNotFound = "MessageNotFound";
+        public const string UnauthorizedToDeleteMessage = "UnauthorizedToDeleteMessage";
+        public const string MessageDeletedSuccessfully = "MessageDeletedSuccessfully";
+        public const string FailedToDeleteMessage = "FailedToDeleteMessage";
 
     }
 }

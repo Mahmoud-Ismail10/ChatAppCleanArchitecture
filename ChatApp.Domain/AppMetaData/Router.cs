@@ -37,6 +37,7 @@
         {
             public const string Prefix = Rule + "messages/";
             public const string SendMessageToContact = Prefix + "sendMessageToContact";
+            public const string DeleteMessage = Prefix + "deleteMessage/" + SingleRoute;
         }
 
         public static class Chat

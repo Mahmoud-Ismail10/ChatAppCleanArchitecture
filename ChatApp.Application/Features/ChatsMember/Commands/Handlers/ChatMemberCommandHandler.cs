@@ -58,7 +58,7 @@ namespace ChatApp.Application.Features.ChatsMember.Commands.Handlers
                 }
             }
             await _transactionService.CommitAsync();
-            return Success<string>(_stringLocalizer[SharedResourcesKeys.ChatDeletedForMeSuccessfully]);
+            return Deleted<string>(_stringLocalizer[SharedResourcesKeys.ChatDeletedForMeSuccessfully]);
         }
         #endregion
     }

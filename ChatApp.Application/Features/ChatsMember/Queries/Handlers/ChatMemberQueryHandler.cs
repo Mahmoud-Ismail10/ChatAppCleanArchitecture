@@ -38,17 +38,19 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Handlers
         public async Task<ApiResponse<List<GetAllChatsMemberResponse>>> Handle(GetAllChatsMemberQuery request, CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.GetUserId();
-            var chatMembers = await _chatMemberService.GetAllChatsMemberAsync(currentUserId);
+            var chatMembers =
+                await _chatMemberService.GetAllChatsMemberAsync(currentUserId);
             if (chatMembers == null || !chatMembers.Any())
                 return NotFound<List<GetAllChatsMemberResponse>>(_stringLocalizer[SharedResourcesKeys.NoChatsFound]);
-            var responseTasks = chatMembers.Where(cm => !cm!.IsDeleted)
-                                           .Select(async cm =>
+
+            var responses = new List<GetAllChatsMemberResponse>();
+            foreach (var cm in chatMembers.Where(cm => !cm!.IsDeleted))
             {
                 string? chatName;
                 string? chatImageUrl;
                 bool? isOnline = null;
                 Guid? chatOtherMemberId = null;
-
+                Guid userId = Guid.Empty;
                 var unreadCount = await _messageService.CountAsync(
                     m => cm!.LastReadMessageAt == null || m.SentAt > cm.LastReadMessageAt.Value);
 
@@ -64,8 +66,10 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Handlers
                     isOnline = _onlineUserService.IsUserOnline(otherMember!.UserId);
                     chatName = otherMember?.User?.Name;
                     chatImageUrl = otherMember?.User?.ProfileImageUrl;
+                    userId = otherMember!.UserId;
                 }
-                return new GetAllChatsMemberResponse(
+
+                responses.Add(new GetAllChatsMemberResponse(
                     chatOtherMemberId,
                     cm.Id,
                     cm.Chat.Id,
@@ -76,11 +80,14 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Handlers
                     cm.Chat.LastMessage?.Type,
                     cm.Chat.LastMessage?.Content,
                     cm.Chat.LastMessage?.SentAt,
-                    unreadCount);
-            }).ToList();
+                    unreadCount));
+            }
 
-            var responses = (await Task.WhenAll(responseTasks)).ToList();
-            if (!responses.Any())
+            var orderedResponses = responses
+                .OrderBy(r => r.LastMessageSendAt)
+                .ToList();
+
+            if (!orderedResponses.Any())
                 return NotFound<List<GetAllChatsMemberResponse>>(_stringLocalizer[SharedResourcesKeys.NoChatsFound]);
             return Success(responses);
         }

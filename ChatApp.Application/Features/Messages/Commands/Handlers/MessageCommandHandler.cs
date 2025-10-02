@@ -12,7 +12,8 @@ using Serilog;
 namespace ChatApp.Application.Features.Messages.Commands.Handlers
 {
     public class MessageCommandHandler : ApiResponseHandler,
-        IRequestHandler<SendMessageToContactCommand, ApiResponse<string>>
+        IRequestHandler<SendMessageToContactCommand, ApiResponse<string>>,
+        IRequestHandler<DeleteMessageCommand, ApiResponse<string>>
     {
         #region Fields
         private readonly IChatService _chatService;
@@ -157,6 +158,23 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                 Log.Error(ex, "An error occurred while sending message from user {UserId} to user {ReceiverId}", _currentUserService.GetUserId(), request.ReceiverId);
                 return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToSendMessage]);
             }
+        }
+
+        public async Task<ApiResponse<string>> Handle(DeleteMessageCommand request, CancellationToken cancellationToken)
+        {
+            var currentUserId = _currentUserService.GetUserId();
+            var message = await _messageService.GetMessageByIdAsync(request.MessageId);
+            if (message == null)
+                return NotFound<string>(_stringLocalizer[SharedResourcesKeys.MessageNotFound]);
+            if (message.SenderId != currentUserId)
+                return Unauthorized<string>(_stringLocalizer[SharedResourcesKeys.UnauthorizedToDeleteMessage]);
+            var result = await _messageService.DeleteMessageAsync(message);
+            return result switch
+            {
+                "ChatNotFound" => NotFound<string>(_stringLocalizer[SharedResourcesKeys.ChatNotFound]),
+                "Failed" => BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToDeleteMessage]),
+                _ => Deleted<string>(_stringLocalizer[SharedResourcesKeys.MessageDeletedSuccessfully])
+            };
         }
         #endregion
     }
