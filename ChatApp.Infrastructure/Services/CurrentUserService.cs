@@ -24,7 +24,7 @@ namespace ChatApp.Infrastructure.Services
         #endregion
 
         #region Handle Functions
-        private ClaimsPrincipal IsAuthenticated()
+        public ClaimsPrincipal IsAuthenticated()
         {
             var user = _httpContextAccessor.HttpContext?.User;
             if (user?.Identity == null || !user.Identity.IsAuthenticated)

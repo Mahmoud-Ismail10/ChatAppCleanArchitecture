@@ -73,6 +73,8 @@ namespace ChatApp.Application.Features.Chats.Queries.Handlers
                     m.SenderId,
                     m.Type,
                     m.Content,
+                    m.FilePath,
+                    m.Duration,
                     m.SentAt
                 )).ToList();
 

@@ -23,6 +23,13 @@ namespace ChatApp.Presentation.Controllers
             var result = await Mediator.Send(new DeleteChatForMeCommand(id));
             return NewResult(result);
         }
+
+        [HttpPut(Router.ChatMember.PinOrUnpin)]
+        public async Task<IActionResult> PinOrUnpin([FromRoute] Guid id)
+        {
+            var result = await Mediator.Send(new PinOrUnpinChatCommand(id));
+            return NewResult(result);
+        }
     }
 }
 

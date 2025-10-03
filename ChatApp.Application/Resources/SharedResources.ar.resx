@@ -288,4 +288,10 @@
   <data name="FailedToDeleteMessage" xml:space="preserve">
     <value>فشل في حذف الرسالة</value>
   </data>
+  <data name="FailedToPinOrUnpinChat" xml:space="preserve">
+    <value>فشل في تثبيت أو إلغاء تثبيت الدردشة</value>
+  </data>
+  <data name="ChatPinStatusChangedSuccessfully" xml:space="preserve">
+    <value>تم تغيير حالة التثبيت الخاصة بالدردشة بنجاح</value>
+  </data>
 </root>

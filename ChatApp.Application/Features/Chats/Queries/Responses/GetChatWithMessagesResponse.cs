@@ -15,6 +15,8 @@ namespace ChatApp.Application.Features.Chats.Queries.Responses
         Guid SenderId,
         MessageType Type,
         string? Content,
+        string? FilePath,
+        int? Duration,
         DateTimeOffset SentAt
     );
 }

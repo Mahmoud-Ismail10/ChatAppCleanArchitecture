@@ -10,6 +10,7 @@ namespace ChatApp.Application.Services.Contracts
         Task<ChatMember?> GetChatMemberByIdAsync(Guid chatMemberId);
         Task<bool> IsDeletedFromAllMembersAsync(Guid chatId);
         Task MarkAsReadAsync(Guid chatMemberId);
+        Task<string> PinOrUnpinChatAsync(Guid chatMemberId);
         Task<string> SoftDeleteChatMemberAsync(ChatMember chatMember);
         Task<string> UpdateChatMemberAsync(ChatMember chatMember);
     }

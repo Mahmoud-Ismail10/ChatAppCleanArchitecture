@@ -288,4 +288,10 @@
   <data name="FailedToDeleteMessage" xml:space="preserve">
     <value>Failed to delete message</value>
   </data>
+  <data name="FailedToPinOrUnpinChat" xml:space="preserve">
+    <value>Failed to pin or unpin chat</value>
+  </data>
+  <data name="ChatPinStatusChangedSuccessfully" xml:space="preserve">
+    <value>Chat pin status changed successfully</value>
+  </data>
 </root>

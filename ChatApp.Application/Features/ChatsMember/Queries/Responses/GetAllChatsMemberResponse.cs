@@ -7,6 +7,7 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Responses
         Guid ChatMemberId,
         Guid ChatId,
         bool IsGroup,
+        bool IsPinned,
         bool? IsOnline,
         string? ChatName,
         string? ChatImageUrl,

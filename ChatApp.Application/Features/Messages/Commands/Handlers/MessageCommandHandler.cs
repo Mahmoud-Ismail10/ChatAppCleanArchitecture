@@ -111,7 +111,7 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                     Content = request.MessageContent,
                     FilePath = fileUrl,
                     Type = messageType,
-                    Duration = request.Duration,
+                    Duration = string.IsNullOrEmpty(request.Duration) ? null : int.Parse(request.Duration),
                     SentAt = DateTimeOffset.UtcNow.ToLocalTime(),
                 };
 

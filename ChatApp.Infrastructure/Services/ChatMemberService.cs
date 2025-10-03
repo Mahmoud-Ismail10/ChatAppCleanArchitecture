@@ -120,6 +120,24 @@ namespace ChatApp.Infrastructure.Services
                 return true;
             return false;
         }
+
+        public async Task<string> PinOrUnpinChatAsync(Guid chatMemberId)
+        {
+            try
+            {
+                var chatMember = await _chatMemberRepository.GetTableAsTracking()
+                        .FirstOrDefaultAsync(cm => cm.Id == chatMemberId);
+                if (chatMember == null) return "ChatMemberNotFound";
+                chatMember.IsPinned = !chatMember.IsPinned;
+                await _chatMemberRepository.UpdateAsync(chatMember);
+                return "Success";
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error in pinning/unpinning chat member: {Message}", ex.InnerException?.Message ?? ex.Message);
+                return "Failed";
+            }
+        }
         #endregion
     }
 }

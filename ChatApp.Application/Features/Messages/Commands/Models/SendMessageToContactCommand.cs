@@ -8,5 +8,5 @@ namespace ChatApp.Application.Features.Messages.Commands.Models
         Guid ReceiverId,
         string? MessageContent,
         IFormFile? FilePath,
-        int? Duration) : IRequest<ApiResponse<string>>;
+        string? Duration) : IRequest<ApiResponse<string>>;
 }

@@ -8,7 +8,8 @@ using Microsoft.Extensions.Localization;
 namespace ChatApp.Application.Features.ChatsMember.Commands.Handlers
 {
     public class ChatMemberCommandHandler : ApiResponseHandler,
-        IRequestHandler<DeleteChatForMeCommand, ApiResponse<string>>
+        IRequestHandler<DeleteChatForMeCommand, ApiResponse<string>>,
+        IRequestHandler<PinOrUnpinChatCommand, ApiResponse<string>>
     {
         #region Fields
         private readonly IChatService _chatService;
@@ -59,6 +60,18 @@ namespace ChatApp.Application.Features.ChatsMember.Commands.Handlers
             }
             await _transactionService.CommitAsync();
             return Deleted<string>(_stringLocalizer[SharedResourcesKeys.ChatDeletedForMeSuccessfully]);
+        }
+
+        public async Task<ApiResponse<string>> Handle(PinOrUnpinChatCommand request, CancellationToken cancellationToken)
+        {
+            _currentUserService.IsAuthenticated();
+            var response = await _chatMemberService.PinOrUnpinChatAsync(request.ChatMemberId);
+            return response switch
+            {
+                "Failed" => BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToPinOrUnpinChat]),
+                "ChatMemberNotFound" => NotFound<string>(_stringLocalizer[SharedResourcesKeys.ChatNotFound]),
+                _ => Success<string>(_stringLocalizer[SharedResourcesKeys.ChatPinStatusChangedSuccessfully])
+            };
         }
         #endregion
     }

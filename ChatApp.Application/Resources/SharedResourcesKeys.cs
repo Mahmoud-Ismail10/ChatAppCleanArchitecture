@@ -59,6 +59,8 @@
         public const string UnauthorizedToDeleteMessage = "UnauthorizedToDeleteMessage";
         public const string MessageDeletedSuccessfully = "MessageDeletedSuccessfully";
         public const string FailedToDeleteMessage = "FailedToDeleteMessage";
+        public const string ChatPinStatusChangedSuccessfully = "ChatPinStatusChangedSuccessfully";
+        public const string FailedToPinOrUnpinChat = "FailedToPinOrUnpinChat";
 
     }
 }

@@ -74,6 +74,7 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Handlers
                     cm.Id,
                     cm.Chat.Id,
                     cm.Chat.IsGroup,
+                    cm.IsPinned,
                     isOnline,
                     chatName,
                     chatImageUrl,
