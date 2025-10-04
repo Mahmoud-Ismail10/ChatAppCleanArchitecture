@@ -46,9 +46,10 @@ namespace ChatApp.Application.Features.Authentication.Commands.Handlers
         #region Handle Functions
         public async Task<ApiResponse<string>> Handle(SendOtpCommand request, CancellationToken cancellationToken)
         {
-            var otp = await _otpService.GenerateOtpAsync(request.PhoneNumber);
+            var formattedPhone = "+" + request.PhoneNumber;
+            var otp = await _otpService.GenerateOtpAsync(formattedPhone);
             var message = _stringLocalizer[SharedResourcesKeys.YourOTPCodeIs] + otp;
-            var result = await _smsService.SendSmsAsync(request.PhoneNumber, message);
+            var result = await _smsService.SendSmsAsync(formattedPhone, message);
             if (result == "Success")
                 return Success<string>(_stringLocalizer[SharedResourcesKeys.OtpSentSuccessfully], request.PhoneNumber);
             return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToSendOtp]);
@@ -56,10 +57,11 @@ namespace ChatApp.Application.Features.Authentication.Commands.Handlers
 
         public async Task<ApiResponse<string>> Handle(VerifyOtpCommand request, CancellationToken cancellationToken)
         {
-            var isValid = await _otpService.VerifyOtpAsync(request.PhoneNumber, request.Otp);
+            var formattedPhone = "+" + request.PhoneNumber;
+            var isValid = await _otpService.VerifyOtpAsync(formattedPhone, request.Otp);
             if (isValid)
             {
-                var userExists = await _userService.GetUserByPhoneNumberAsync(request.PhoneNumber);
+                var userExists = await _userService.GetUserByPhoneNumberAsync(formattedPhone);
                 if (userExists != null)
                 {
                     var userMapper = new UserDto
@@ -79,13 +81,14 @@ namespace ChatApp.Application.Features.Authentication.Commands.Handlers
 
         public async Task<ApiResponse<string>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
-            var existingUser = await _userService.GetUserByPhoneNumberAsync(request.PhoneNumber!);
+            var formattedPhone = "+" + request.PhoneNumber;
+            var existingUser = await _userService.GetUserByPhoneNumberAsync(formattedPhone);
             if (existingUser == null)
             {
                 var user = new User();
                 user.Id = Guid.NewGuid();
                 user.Name = request.Name;
-                user.PhoneNumber = request.PhoneNumber;
+                user.PhoneNumber = formattedPhone;
                 user.Email = request.Email;
                 user.CreatedAt = DateTimeOffset.UtcNow.ToLocalTime();
                 user.LastSeenAt = DateTimeOffset.UtcNow.ToLocalTime();

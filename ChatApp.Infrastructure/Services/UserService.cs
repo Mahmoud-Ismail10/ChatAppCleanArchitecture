@@ -85,6 +85,12 @@ namespace ChatApp.Infrastructure.Services
                 return "Failed";
             }
         }
+
+        public async Task<bool> IsPhoneUniqueAsync(string phoneNumber, CancellationToken cancellationToken)
+        {
+            return !await _userRepository.GetTableNoTracking()
+                .AnyAsync(u => u.PhoneNumber == phoneNumber, cancellationToken);
+        }
         #endregion
     }
 }

@@ -23,9 +23,9 @@ namespace ChatApp.Application.Features.Authentication.Commands.Validatos
         public void ApplyValidationRoles()
         {
             RuleFor(x => x.PhoneNumber)
-                .NotEmpty().WithMessage(_stringLocalizer[SharedResourcesKeys.NotEmpty])
-                .NotNull().WithMessage(_stringLocalizer[SharedResourcesKeys.Required])
-                .Matches(@"^\+[1-9]\d{1,14}$").WithMessage(_stringLocalizer[SharedResourcesKeys.PhoneNumberFormat]);
+            .NotEmpty().WithMessage(_stringLocalizer[SharedResourcesKeys.NotEmpty])
+            .NotNull().WithMessage(_stringLocalizer[SharedResourcesKeys.Required])
+            .Matches(@"^\d{10,15}$").WithMessage(_stringLocalizer[SharedResourcesKeys.PhoneNumberFormat]);
         }
         #endregion
     }

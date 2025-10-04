@@ -145,7 +145,7 @@
     <value>رقم الهاتف</value>
   </data>
   <data name="PhoneNumberFormat" xml:space="preserve">
-    <value>يجب أن يكون رقم الهاتف بتنسيق E.164 (مثال: ‎+1234567890).</value>
+    <value>تنسيق رقم الهاتف غير صالح، ابدأ بكود الدولة ثم اضف رقمك</value>
   </data>
   <data name="Required" xml:space="preserve">
     <value>هذا الحقل مطلوب</value>
@@ -311,5 +311,8 @@
   </data>
   <data name="UnauthorizedToSendMessage" xml:space="preserve">
     <value>غير مصرح لك بإرسال الرسالة</value>
+  </data>
+  <data name="PhoneNumberAlreadyExists" xml:space="preserve">
+    <value>رقم الهاتف موجود بالفعل</value>
   </data>
 </root>

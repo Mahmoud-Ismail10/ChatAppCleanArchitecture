@@ -5,7 +5,7 @@ namespace ChatApp.Application.Services.Contracts
     public interface IMessageNotifier
     {
         Task NotifyChatReadAsync(Guid chatId, Guid userId);
-        Task NotifyMessageToContactAsync(SendMessageDto message);
+        Task NotifyMessageAsync(SendMessageDto message);
         Task NotifyUnreadIncrementAsync(Guid chatId);
     }
 }

@@ -67,6 +67,7 @@
         public const string InvalidFileType = "InvalidFileType";
         public const string FileIsEmpty = "FileIsEmpty";
         public const string UnauthorizedToSendMessage = "UnauthorizedToSendMessage";
+        public const string PhoneNumberAlreadyExists = "PhoneNumberAlreadyExists";
 
     }
 }

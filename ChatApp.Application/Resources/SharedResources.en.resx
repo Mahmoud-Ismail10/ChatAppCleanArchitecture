@@ -145,7 +145,7 @@
     <value>Phone Number</value>
   </data>
   <data name="PhoneNumberFormat" xml:space="preserve">
-    <value>Phone number must be in E.164 format (e.g., +1234567890).</value>
+    <value>Invalid phone number format, start with country code then add your number</value>
   </data>
   <data name="Required" xml:space="preserve">
     <value>This field is required</value>
@@ -311,5 +311,8 @@
   </data>
   <data name="UnauthorizedToSendMessage" xml:space="preserve">
     <value>Unauthorized to send message</value>
+  </data>
+  <data name="PhoneNumberAlreadyExists" xml:space="preserve">
+    <value>Phone number already exists</value>
   </data>
 </root>

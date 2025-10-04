@@ -8,6 +8,7 @@ namespace ChatApp.Application.Services.Contracts
         Task<string> AddUserAsync(User user, IFormFile file);
         Task<User?> GetUserByIdAsync(Guid userId);
         Task<User?> GetUserByPhoneNumberAsync(string phoneNumber);
+        Task<bool> IsPhoneUniqueAsync(string phoneNumber, CancellationToken cancellationToken);
         Task<string> UpdateUserAsync(User user, IFormFile file);
     }
 }

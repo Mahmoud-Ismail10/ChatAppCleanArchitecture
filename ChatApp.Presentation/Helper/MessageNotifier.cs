@@ -19,7 +19,7 @@ namespace ChatApp.Presentation.Helper
         #endregion
 
         #region Functions
-        public async Task NotifyMessageToContactAsync(SendMessageDto message)
+        public async Task NotifyMessageAsync(SendMessageDto message)
         {
             await _hub.Clients.Group(message.ChatId.ToString()).SendAsync("ReceiveMessage", message);
         }
