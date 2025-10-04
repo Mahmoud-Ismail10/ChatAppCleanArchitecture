@@ -9,8 +9,8 @@ namespace ChatApp.Presentation.Controllers
     [Authorize(AuthenticationSchemes = "SessionKey")]
     public class MessageController : AppControllerBase
     {
-        [HttpPost(Router.Message.SendMessageToContact)]
-        public async Task<IActionResult> SendMessageToContact([FromForm] SendMessageToContactCommand command)
+        [HttpPost(Router.Message.SendMessage)]
+        public async Task<IActionResult> SendMessage([FromForm] SendMessageCommand command)
         {
             var result = await Mediator.Send(command);
             return NewResult(result);

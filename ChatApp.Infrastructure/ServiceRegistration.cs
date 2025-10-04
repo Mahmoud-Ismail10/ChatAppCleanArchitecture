@@ -21,6 +21,11 @@ namespace ChatApp.Infrastructure
             configuration.GetSection("Twilio").Bind(twilioSettings);
             services.AddSingleton(twilioSettings);
 
+            // File Upload Settings
+            var fileUploadSettings = new FileUploadSettings();
+            configuration.GetSection("FileUpload").Bind(fileUploadSettings);
+            services.AddSingleton(fileUploadSettings);
+
             //Swagger Gn
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(options =>

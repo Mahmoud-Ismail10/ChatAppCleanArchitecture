@@ -12,11 +12,12 @@ using Serilog;
 namespace ChatApp.Application.Features.Messages.Commands.Handlers
 {
     public class MessageCommandHandler : ApiResponseHandler,
-        IRequestHandler<SendMessageToContactCommand, ApiResponse<string>>,
+        IRequestHandler<SendMessageCommand, ApiResponse<string>>,
         IRequestHandler<DeleteMessageCommand, ApiResponse<string>>
     {
         #region Fields
         private readonly IChatService _chatService;
+        private readonly IFileService _fileService;
         private readonly IMessageService _messageService;
         private readonly IMessageNotifier _messageNotifier;
         private readonly IChatMemberService _chatMemberService;
@@ -28,6 +29,7 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
         #region Constructors
         public MessageCommandHandler(
             IChatService chatService,
+            IFileService fileService,
             IMessageService messageService,
             IMessageNotifier messageNotifier,
             IChatMemberService chatMemberService,
@@ -36,6 +38,7 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
             IStringLocalizer<SharedResources> stringLocalizer) : base(stringLocalizer)
         {
             _chatService = chatService;
+            _fileService = fileService;
             _messageService = messageService;
             _messageNotifier = messageNotifier;
             _chatMemberService = chatMemberService;
@@ -46,67 +49,67 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
         #endregion
 
         #region Handle Functions
-        public async Task<ApiResponse<string>> Handle(SendMessageToContactCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<string>> Handle(SendMessageCommand request, CancellationToken cancellationToken)
         {
             using var transaction = await _transactionService.BeginTransactionAsync();
-
             try
             {
                 var currentUserId = _currentUserService.GetUserId();
-                var chat = await _chatService.GetChatBetweenUsersAsync(currentUserId, request.ReceiverId);
-                if (chat == null)
-                {
-                    chat = new Chat
-                    {
-                        CreatedAt = DateTimeOffset.UtcNow.ToLocalTime(),
-                        ChatMembers = new List<ChatMember>
-                    {
-                        new ChatMember { UserId = currentUserId, Role = Role.Member, JoinedAt = DateTimeOffset.UtcNow.ToLocalTime() },
-                        new ChatMember { UserId = request.ReceiverId, Role = Role.Member, JoinedAt = DateTimeOffset.UtcNow.ToLocalTime() }
-                    }
-                    };
-                    var result1 = await _chatService.CreateChatAsync(chat);
-                    if (result1 != "Success") return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToCreateChat]);
-                }
-                else if (chat.ChatMembers.Any(m => m.IsDeleted))
-                {
-                    var deletedMember = chat.ChatMembers.FirstOrDefault(m => m.IsDeleted);
-                    if (deletedMember != null)
-                    {
-                        deletedMember.IsDeleted = false;
+                Chat? chat = null;
 
-                        var result = await _chatMemberService.UpdateChatMemberAsync(deletedMember);
+                if (request.ReceiverId != null)
+                {
+                    chat = await _chatService.GetChatBetweenUsersAsync(currentUserId, (Guid)request.ReceiverId);
+                    if (chat == null)
+                    {
+                        chat = new Chat
+                        {
+                            CreatedAt = DateTimeOffset.UtcNow.ToLocalTime(),
+                            ChatMembers = new List<ChatMember>
+                            {
+                                new ChatMember { UserId = currentUserId, Role = Role.Member, JoinedAt = DateTimeOffset.UtcNow.ToLocalTime() },
+                                new ChatMember { UserId = (Guid)request.ReceiverId, Role = Role.Member, JoinedAt = DateTimeOffset.UtcNow.ToLocalTime() }
+                            }
+                        };
+                        var result = await _chatService.CreateChatAsync(chat);
+                        if (result != "Success") return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToCreateChat]);
+                    }
+                    else if (chat.ChatMembers.Any(m => m.IsDeleted))
+                    {
+                        var deletedMember = chat.ChatMembers.FirstOrDefault(m => m.IsDeleted);
+                        var result = await _chatMemberService.RestoreDeletedChatMembersAsync(deletedMember);
                         if (result != "Success") return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToCreateChat]);
                     }
                 }
+                else if (request.ChatId != null)
+                {
+                    chat = await _chatService.GetChatWithMessagesAsync((Guid)request.ChatId);
+                    if (chat == null) return NotFound<string>(_stringLocalizer[SharedResourcesKeys.ChatNotFound]);
+                    var chatMember = await _chatMemberService.IsMemberOfChatAsync(currentUserId, chat.Id);
+                    if (!chatMember) return Unauthorized<string>(_stringLocalizer[SharedResourcesKeys.UnauthorizedToSendMessage]);
+                }
+                else return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.ReceiverOrChatRequired]);
+
                 string? fileUrl = null;
                 MessageType messageType = MessageType.Text;
 
                 if (request.FilePath != null)
                 {
-                    var fileName = Guid.NewGuid() + Path.GetExtension(request.FilePath.FileName);
-                    var filePath = Path.Combine("wwwroot/Files", fileName);
-
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await request.FilePath.CopyToAsync(stream, cancellationToken);
-                    }
-
-                    fileUrl = "/Files/" + fileName;
-                    messageType = request.FilePath == null ? MessageType.Text
-                        : request.FilePath.ContentType.ToLower() switch
+                    string? messageError = null;
+                    (fileUrl, messageType, messageError) = await _fileService.GetFileAsync(request.FilePath, cancellationToken);
+                    if (messageError != null)
+                        return messageError switch
                         {
-                            var ct when ct.StartsWith("image/") => MessageType.Image,
-                            var ct when ct.StartsWith("audio/") => MessageType.Audio,
-                            var ct when ct.StartsWith("video/") => MessageType.Video,
-                            "application/pdf" => MessageType.PDF,
-                            _ => MessageType.Document
+                            "FileIsEmpty" => BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FileIsEmpty]),
+                            "InvalidFileType" => BadRequest<string>(_stringLocalizer[SharedResourcesKeys.InvalidFileType]),
+                            "FileSizeExceedsLimit" => BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FileSizeExceedsLimit]),
+                            _ => BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToUploadFile]),
                         };
                 }
 
                 var message = new Message
                 {
-                    ChatId = chat.Id,
+                    ChatId = chat!.Id,
                     SenderId = currentUserId,
                     Content = request.MessageContent,
                     FilePath = fileUrl,

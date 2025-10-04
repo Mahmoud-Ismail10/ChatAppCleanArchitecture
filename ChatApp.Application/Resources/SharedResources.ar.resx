@@ -294,4 +294,22 @@
   <data name="ChatPinStatusChangedSuccessfully" xml:space="preserve">
     <value>تم تغيير حالة التثبيت الخاصة بالدردشة بنجاح</value>
   </data>
+  <data name="ReceiverOrChatRequired" xml:space="preserve">
+    <value>يجب إدخال إما معرف المستلم أو معرف الدردشة ، ولكن ليس كليهما</value>
+  </data>
+  <data name="FileIsEmpty" xml:space="preserve">
+    <value>الملف فارغ</value>
+  </data>
+  <data name="FailedToUploadFile" xml:space="preserve">
+    <value>فشل في رفع الملف</value>
+  </data>
+  <data name="FileSizeExceedsLimit" xml:space="preserve">
+    <value>حجم الملف يتجاوز الحد المسموح به</value>
+  </data>
+  <data name="InvalidFileType" xml:space="preserve">
+    <value>نوع الملف غير صالح</value>
+  </data>
+  <data name="UnauthorizedToSendMessage" xml:space="preserve">
+    <value>غير مصرح لك بإرسال الرسالة</value>
+  </data>
 </root>

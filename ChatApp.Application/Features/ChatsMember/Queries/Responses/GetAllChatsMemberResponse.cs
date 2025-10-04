@@ -4,6 +4,7 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Responses
 {
     public record GetAllChatsMemberResponse(
         Guid? ChatOtherMemberId,
+        Guid? ReceiverUserId,
         Guid ChatMemberId,
         Guid ChatId,
         bool IsGroup,
@@ -11,9 +12,8 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Responses
         bool? IsOnline,
         string? ChatName,
         string? ChatImageUrl,
-        MessageType? MessageType,
-        string? LastMessage,
-        DateTimeOffset? LastMessageSendAt,
+        MessageType? LastMessageType,
+        string? LastMessageContent,
+        DateTimeOffset? LastMessageSentAt,
         int UnreadCount);
-
 }

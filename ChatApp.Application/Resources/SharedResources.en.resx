@@ -294,4 +294,22 @@
   <data name="ChatPinStatusChangedSuccessfully" xml:space="preserve">
     <value>Chat pin status changed successfully</value>
   </data>
+  <data name="ReceiverOrChatRequired" xml:space="preserve">
+    <value>You must provide either ReceiverId or ChatId, but not both</value>
+  </data>
+  <data name="FileIsEmpty" xml:space="preserve">
+    <value>File is empty</value>
+  </data>
+  <data name="FailedToUploadFile" xml:space="preserve">
+    <value>Failed to upload file</value>
+  </data>
+  <data name="FileSizeExceedsLimit" xml:space="preserve">
+    <value>File size exceeds the limit</value>
+  </data>
+  <data name="InvalidFileType" xml:space="preserve">
+    <value>Invalid file type</value>
+  </data>
+  <data name="UnauthorizedToSendMessage" xml:space="preserve">
+    <value>Unauthorized to send message</value>
+  </data>
 </root>

@@ -61,6 +61,12 @@
         public const string FailedToDeleteMessage = "FailedToDeleteMessage";
         public const string ChatPinStatusChangedSuccessfully = "ChatPinStatusChangedSuccessfully";
         public const string FailedToPinOrUnpinChat = "FailedToPinOrUnpinChat";
+        public const string ReceiverOrChatRequired = "ReceiverOrChatRequired";
+        public const string FailedToUploadFile = "FailedToUploadFile";
+        public const string FileSizeExceedsLimit = "FileSizeExceedsLimit";
+        public const string InvalidFileType = "InvalidFileType";
+        public const string FileIsEmpty = "FileIsEmpty";
+        public const string UnauthorizedToSendMessage = "UnauthorizedToSendMessage";
 
     }
 }

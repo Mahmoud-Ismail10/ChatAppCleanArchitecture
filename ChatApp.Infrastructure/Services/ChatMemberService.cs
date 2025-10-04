@@ -1,4 +1,5 @@
-﻿using ChatApp.Application.Resources;
+﻿using ChatApp.Application.Features.ChatsMember.Queries.Responses;
+using ChatApp.Application.Resources;
 using ChatApp.Application.Services.Contracts;
 using ChatApp.Domain.Entities;
 using ChatApp.Domain.Repositories.Contracts;
@@ -25,13 +26,52 @@ namespace ChatApp.Infrastructure.Services
         #endregion
 
         #region Functions
-        public async Task<IReadOnlyList<ChatMember?>> GetAllChatsMemberAsync(Guid userId)
+        public async Task<IReadOnlyList<GetAllChatsMemberResponse>> GetAllChatsMemberAsync(Guid userId)
         {
-            return await _chatMemberRepository.GetTableAsTracking()
-                                              .Include(cm => cm.Chat)
-                                                .ThenInclude(c => c!.LastMessage)
-                                              .Where(u => u.UserId == userId)
-                                              .ToListAsync();
+            return await _chatMemberRepository.GetTableNoTracking()
+             .Where(cm => cm.UserId == userId && !cm.IsDeleted)
+             .Select(cm => new GetAllChatsMemberResponse
+             (
+                 cm.Chat!.IsGroup
+                     ? Guid.Empty
+                     : cm.Chat.ChatMembers
+                         .Where(m => m.UserId != userId)
+                         .Select(m => m.Id)
+                         .FirstOrDefault(), // ChatMemberId of the other member in case of one-to-one chat
+
+                 cm.Chat.IsGroup
+                     ? null
+                     : cm.Chat.ChatMembers
+                         .Where(m => m.UserId != userId)
+                         .Select(m => m.UserId)
+                         .FirstOrDefault(), // UserId of the other member in case of one-to-one chat
+
+                 cm.Id, // ChatMemberId
+                 cm.Chat!.Id, // ChatId
+                 cm.Chat.IsGroup, // IsGroup
+                 cm.IsPinned, // IsPinned
+                 false, // IsOnline (This will be set in the handler) 
+
+                 cm.Chat.IsGroup
+                     ? cm.Chat.Name
+                     : cm.Chat.ChatMembers
+                         .Where(m => m.UserId != userId)
+                         .Select(m => m.User!.Name)
+                         .FirstOrDefault(), // ChatName
+
+                 cm.Chat.IsGroup
+                     ? cm.Chat.GroupImageUrl
+                     : cm.Chat.ChatMembers
+                         .Where(m => m.UserId != userId)
+                         .Select(m => m.User!.ProfileImageUrl)
+                         .FirstOrDefault(), // ChatImageUrl
+
+                 cm.Chat.LastMessage!.Type, // LastMessageType
+                 cm.Chat.LastMessage.Content, // LastMessageContent
+                 cm.Chat.LastMessage.SentAt, // LastMessageSentAt
+                 cm.Chat.Messages.Count(m =>
+                     cm.LastReadMessageAt == null || m.SentAt > cm.LastReadMessageAt.Value) // UnreadMessagesCount
+             )).ToListAsync();
         }
 
         public async Task<string> AddChatMemberAsync(ChatMember chatMember)
@@ -54,6 +94,25 @@ namespace ChatApp.Infrastructure.Services
             {
                 await _chatMemberRepository.UpdateAsync(chatMember);
                 return "Success";
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error in updating chat member: {Message}", ex.InnerException?.Message ?? ex.Message);
+                return "Failed";
+            }
+        }
+
+        public async Task<string> RestoreDeletedChatMembersAsync(ChatMember? chatMember)
+        {
+            try
+            {
+                if (chatMember != null)
+                {
+                    chatMember.IsDeleted = false;
+                    await _chatMemberRepository.UpdateAsync(chatMember);
+                    return "Success";
+                }
+                return "Failed";
             }
             catch (Exception ex)
             {
@@ -137,6 +196,12 @@ namespace ChatApp.Infrastructure.Services
                 Log.Error("Error in pinning/unpinning chat member: {Message}", ex.InnerException?.Message ?? ex.Message);
                 return "Failed";
             }
+        }
+
+        public async Task<bool> IsMemberOfChatAsync(Guid userId, Guid chatId)
+        {
+            return await _chatMemberRepository.GetTableNoTracking()
+                                              .AnyAsync(cm => cm.UserId == userId && cm.ChatId == chatId && !cm.IsDeleted);
         }
         #endregion
     }

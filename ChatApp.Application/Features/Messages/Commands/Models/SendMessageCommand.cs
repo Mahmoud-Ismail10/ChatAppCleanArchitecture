@@ -4,8 +4,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace ChatApp.Application.Features.Messages.Commands.Models
 {
-    public record SendMessageToContactCommand(
-        Guid ReceiverId,
+    public record SendMessageCommand(
+        Guid? ReceiverId,
+        Guid? ChatId,
         string? MessageContent,
         IFormFile? FilePath,
         string? Duration) : IRequest<ApiResponse<string>>;

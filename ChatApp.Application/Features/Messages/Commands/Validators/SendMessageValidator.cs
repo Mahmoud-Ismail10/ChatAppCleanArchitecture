@@ -5,26 +5,25 @@ using Microsoft.Extensions.Localization;
 
 namespace ChatApp.Application.Features.Messages.Commands.Validators
 {
-    public class SendMessageToContactValidator : AbstractValidator<SendMessageToContactCommand>
+    public class SendMessageValidator : AbstractValidator<SendMessageCommand>
     {
         #region Fields
         private readonly IStringLocalizer<SharedResources> _stringLocalizer;
         #endregion
 
         #region Constructors
-        public SendMessageToContactValidator(IStringLocalizer<SharedResources> stringLocalizer)
+        public SendMessageValidator(IStringLocalizer<SharedResources> stringLocalizer)
         {
             _stringLocalizer = stringLocalizer;
             ApplyValidationRoles();
         }
         #endregion
 
-        #region Handle Functions
+        #region Functions
         public void ApplyValidationRoles()
         {
-            RuleFor(x => x.ReceiverId)
-                .NotEmpty().WithMessage(_stringLocalizer[SharedResourcesKeys.NotEmpty])
-                .NotNull().WithMessage(_stringLocalizer[SharedResourcesKeys.Required]);
+            RuleFor(x => x).Must(x => (x.ReceiverId.HasValue && !x.ChatId.HasValue) || (!x.ReceiverId.HasValue && x.ChatId.HasValue))
+                    .WithMessage(_stringLocalizer[SharedResourcesKeys.ReceiverOrChatRequired]);
 
             When(x => x.FilePath == null, () =>
             {
