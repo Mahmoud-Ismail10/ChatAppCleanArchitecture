@@ -13,14 +13,17 @@ namespace ChatApp.Infrastructure.Services
     {
         #region Fields
         private readonly IChatMemberRepository _chatMemberRepository;
+        private readonly IMessageNotifier _messageNotifier;
         private readonly IStringLocalizer<SharedResources> _stringLocalizer;
         #endregion
 
         #region Constructors
         public ChatMemberService(IChatMemberRepository chatMemberRepository,
+            IMessageNotifier messageNotifier,
             IStringLocalizer<SharedResources> stringLocalizer)
         {
             _chatMemberRepository = chatMemberRepository;
+            _messageNotifier = messageNotifier;
             _stringLocalizer = stringLocalizer;
         }
         #endregion
@@ -129,7 +132,7 @@ namespace ChatApp.Infrastructure.Services
                                               .FirstOrDefaultAsync();
         }
 
-        public async Task MarkAsReadAsync(Guid chatMemberId)
+        public async Task MarkAsReadAsync(Guid chatMemberId, Guid userId)
         {
             try
             {
@@ -140,6 +143,8 @@ namespace ChatApp.Infrastructure.Services
 
                 chatMember.LastReadMessageAt = DateTimeOffset.UtcNow.ToLocalTime();
                 await _chatMemberRepository.UpdateAsync(chatMember);
+                // Notify other members in the chat that messages have been read
+                await _messageNotifier.NotifyChatReadAsync(chatMember.ChatId, userId);
             }
             catch (Exception ex)
             {

@@ -27,16 +27,24 @@ namespace ChatApp.Presentation.Security
             _sessions = sessions;
         }
 
+        #region AuthenticateUserFromHeaderOrQuery
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            if (!Request.Headers.TryGetValue("Authorization", out var header))
+            string? rawKey = null;
+
+            if (Request.Headers.TryGetValue("Authorization", out var header))
+            {
+                var val = header.ToString();
+                if (val.StartsWith("Key ", StringComparison.OrdinalIgnoreCase))
+                    rawKey = val.Substring("Key ".Length).Trim();
+            }
+
+            if (string.IsNullOrEmpty(rawKey))
+                rawKey = Uri.UnescapeDataString(Request.Query["rawKey"].ToString()).Trim().Replace(" ", "+");
+
+            if (string.IsNullOrEmpty(rawKey))
                 return AuthenticateResult.Fail(_stringLocalizer[SharedResourcesKeys.MissingAuthorizationHeader]);
 
-            var val = header.ToString();
-            if (!val.StartsWith("Key ", StringComparison.OrdinalIgnoreCase))
-                return AuthenticateResult.Fail(_stringLocalizer[SharedResourcesKeys.InvalidScheme]);
-
-            var rawKey = val.Substring("Key ".Length).Trim();
             var keyHash = SessionKeyHelper.ComputeSha256Hex(rawKey);
             var session = await _sessions.GetByKeyHashAsync(keyHash);
 
@@ -50,6 +58,7 @@ namespace ChatApp.Presentation.Security
 
             return AuthenticateResult.Success(ticket);
         }
+        #endregion
 
         // Override HandleChallengeAsync 401
         protected override Task HandleChallengeAsync(AuthenticationProperties properties)
