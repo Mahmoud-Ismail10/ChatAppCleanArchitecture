@@ -53,6 +53,9 @@
             public const string GetUserStatus = Prefix + "getUserStatus/" + SingleRoute;
             public const string GetCurrentUser = Prefix + "getCurrentUser";
             public const string GetCurrentUserId = Prefix + "getCurrentUserId/";
+            public const string UpdateProfile = Prefix + "updateProfile/";
+            public const string UpdateProfileImage = Prefix + "updateProfileImage/";
+            public const string DeleteProfileImage = Prefix + "deleteProfileImage/";
         }
     }
 }

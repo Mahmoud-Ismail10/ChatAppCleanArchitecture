@@ -1,4 +1,5 @@
-﻿using ChatApp.Application.Features.Users.Queries.Models;
+﻿using ChatApp.Application.Features.Users.Commands.Models;
+using ChatApp.Application.Features.Users.Queries.Models;
 using ChatApp.Domain.AppMetaData;
 using ChatApp.Presentation.Base;
 using Microsoft.AspNetCore.Authorization;
@@ -27,6 +28,27 @@ namespace ChatApp.Presentation.Controllers
         public async Task<IActionResult> GetCurrentUserId()
         {
             var result = await Mediator.Send(new GetCurrentUserIdQuery());
+            return NewResult(result);
+        }
+
+        [HttpPut(Router.User.UpdateProfile)]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileCommand command)
+        {
+            var result = await Mediator.Send(command);
+            return NewResult(result);
+        }
+
+        [HttpPut(Router.User.UpdateProfileImage)]
+        public async Task<IActionResult> UpdateProfileImage([FromForm] UpdateProfileImageCommand command)
+        {
+            var result = await Mediator.Send(command);
+            return NewResult(result);
+        }
+
+        [HttpPut(Router.User.DeleteProfileImage)]
+        public async Task<IActionResult> UpdateProfileImage()
+        {
+            var result = await Mediator.Send(new DeleteProfileImageCommand());
             return NewResult(result);
         }
     }

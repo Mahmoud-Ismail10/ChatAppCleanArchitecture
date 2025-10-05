@@ -94,6 +94,17 @@ namespace ChatApp.Infrastructure.Services
             }
         }
 
+        public void DeleteFile(string? fileUrl)
+        {
+            if (string.IsNullOrWhiteSpace(fileUrl))
+                return;
+
+            var relativePath = fileUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+            var fullPath = Path.Combine(_webHostEnvironment.WebRootPath, relativePath);
+
+            if (File.Exists(fullPath))
+                File.Delete(fullPath);
+        }
         #endregion
     }
 }

@@ -315,4 +315,34 @@
   <data name="PhoneNumberAlreadyExists" xml:space="preserve">
     <value>Phone number already exists</value>
   </data>
+  <data name="MaxLengthIs50" xml:space="preserve">
+    <value>Maximum length is 50 characters</value>
+  </data>
+  <data name="InvalidEmailFormat" xml:space="preserve">
+    <value>Invalid email format</value>
+  </data>
+  <data name="FailedToUpdateProfile" xml:space="preserve">
+    <value>Failed to update profile</value>
+  </data>
+  <data name="ProfileUpdatedSuccessfully" xml:space="preserve">
+    <value>Profile updated successfully</value>
+  </data>
+  <data name="NoImageProvided" xml:space="preserve">
+    <value>No image provided.</value>
+  </data>
+  <data name="FailedToDeleteProfileImage" xml:space="preserve">
+    <value>Failed to delete profile image.</value>
+  </data>
+  <data name="ProfileImageDeletedSuccessfully" xml:space="preserve">
+    <value>Profile image deleted successfully.</value>
+  </data>
+  <data name="NoProfileImageToDelete" xml:space="preserve">
+    <value>No profile image to delete.</value>
+  </data>
+  <data name="FailedToUpdateProfileImage" xml:space="preserve">
+    <value>Failed to update profile image.</value>
+  </data>
+  <data name="ProfileImageUpdatedSuccessfully" xml:space="preserve">
+    <value>Profile image updated successfully.</value>
+  </data>
 </root>

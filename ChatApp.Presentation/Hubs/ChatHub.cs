@@ -58,7 +58,7 @@ namespace ChatApp.Presentation.Hubs
                 if (user != null)
                 {
                     user.LastSeenAt = DateTimeOffset.UtcNow.ToLocalTime();
-                    await _userService.UpdateUserAsync(user, null!);
+                    await _userService.UpdateUserAsync(user);
 
                     var chats = await _chatService.GetAllChatsOfUserAsync(currentUserId);
                     if (chats.Any())

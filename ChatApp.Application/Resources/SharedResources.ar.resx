@@ -315,4 +315,34 @@
   <data name="PhoneNumberAlreadyExists" xml:space="preserve">
     <value>رقم الهاتف موجود بالفعل</value>
   </data>
+  <data name="MaxLengthIs50" xml:space="preserve">
+    <value>الحد الأقصى لعدد الحروف هو 50</value>
+  </data>
+  <data name="InvalidEmailFormat" xml:space="preserve">
+    <value>تنسيق الايميل غير صالح</value>
+  </data>
+  <data name="FailedToUpdateProfile" xml:space="preserve">
+    <value>فشل في تحديث الملف الشخصي</value>
+  </data>
+  <data name="ProfileUpdatedSuccessfully" xml:space="preserve">
+    <value>تم تحديث الملف الشخصي بنجاح</value>
+  </data>
+  <data name="NoImageProvided" xml:space="preserve">
+    <value>لم يتم توفير صورة.</value>
+  </data>
+  <data name="FailedToDeleteProfileImage" xml:space="preserve">
+    <value>فشل في حذف صورة الملف الشخصي.</value>
+  </data>
+  <data name="ProfileImageDeletedSuccessfully" xml:space="preserve">
+    <value>تم حذف صورة الملف الشخصي بنجاح.</value>
+  </data>
+  <data name="NoProfileImageToDelete" xml:space="preserve">
+    <value>لا توجد صورة ملف شخصي لحذفها.</value>
+  </data>
+  <data name="FailedToUpdateProfileImage" xml:space="preserve">
+    <value>فشل في تحديث صورة الملف الشخصي.</value>
+  </data>
+  <data name="ProfileImageUpdatedSuccessfully" xml:space="preserve">
+    <value>تم تحديث صورة الملف الشخصي بنجاح.</value>
+  </data>
 </root>

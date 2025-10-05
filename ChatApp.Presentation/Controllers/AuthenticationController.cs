@@ -23,7 +23,7 @@ namespace ChatApp.Presentation.Controllers
         }
 
         [HttpPost(Router.Authentication.Register)]
-        public async Task<IActionResult> Register([FromForm] RegisterUserCommand command)
+        public async Task<IActionResult> Register([FromBody] RegisterUserCommand command)
         {
             var result = await Mediator.Send(command);
             return NewResult(result);

@@ -93,7 +93,7 @@ namespace ChatApp.Application.Features.Authentication.Commands.Handlers
                 user.CreatedAt = DateTimeOffset.UtcNow.ToLocalTime();
                 user.LastSeenAt = DateTimeOffset.UtcNow.ToLocalTime();
 
-                var result = await _userService.AddUserAsync(user, request.ProfileImageUrl!);
+                var result = await _userService.AddUserAsync(user);
                 return result switch
                 {
                     "Success" => Success<string>(_stringLocalizer[SharedResourcesKeys.UserRegisteredSuccessfully], user.Id),
@@ -105,7 +105,7 @@ namespace ChatApp.Application.Features.Authentication.Commands.Handlers
             existingUser.Email = request.Email;
             existingUser.LastSeenAt = DateTimeOffset.UtcNow.ToLocalTime();
 
-            var updateResult = await _userService.UpdateUserAsync(existingUser, request.ProfileImageUrl!);
+            var updateResult = await _userService.UpdateUserAsync(existingUser);
             return updateResult switch
             {
                 "Success" => Success<string>(_stringLocalizer[SharedResourcesKeys.LoginSuccessfully], existingUser.Id),

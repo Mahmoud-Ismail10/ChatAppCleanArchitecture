@@ -39,6 +39,10 @@ namespace ChatApp.Application.Features.Authentication.Commands.Validatos
                 var formattedPhone = "+" + phoneNumber;
                 return await _userService.IsPhoneUniqueAsync(formattedPhone, cancellationToken);
             }).WithMessage(_stringLocalizer[SharedResourcesKeys.PhoneNumberAlreadyExists]);
+
+            RuleFor(x => x.Email)
+                .EmailAddress().WithMessage(_stringLocalizer[SharedResourcesKeys.InvalidEmailFormat])
+                .MaximumLength(50).WithMessage(_stringLocalizer[SharedResourcesKeys.MaxLengthIs50]);
         }
         #endregion
     }

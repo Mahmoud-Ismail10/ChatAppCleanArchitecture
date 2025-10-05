@@ -68,6 +68,16 @@
         public const string FileIsEmpty = "FileIsEmpty";
         public const string UnauthorizedToSendMessage = "UnauthorizedToSendMessage";
         public const string PhoneNumberAlreadyExists = "PhoneNumberAlreadyExists";
+        public const string MaxLengthIs50 = "MaxLengthIs50";
+        public const string InvalidEmailFormat = "InvalidEmailFormat";
+        public const string ProfileUpdatedSuccessfully = "ProfileUpdatedSuccessfully";
+        public const string FailedToUpdateProfile = "FailedToUpdateProfile";
+        public const string FailedToDeleteProfileImage = "FailedToDeleteProfileImage";
+        public const string ProfileImageDeletedSuccessfully = "ProfileImageDeletedSuccessfully";
+        public const string ProfileImageUpdatedSuccessfully = "ProfileImageUpdatedSuccessfully";
+        public const string NoProfileImageToDelete = "NoProfileImageToDelete";
+        public const string FailedToUpdateProfileImage = "FailedToUpdateProfileImage";
+        public const string NoImageProvided = "NoImageProvided";
 
     }
 }
