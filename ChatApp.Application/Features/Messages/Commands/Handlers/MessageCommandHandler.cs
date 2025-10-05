@@ -13,7 +13,8 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
 {
     public class MessageCommandHandler : ApiResponseHandler,
         IRequestHandler<SendMessageCommand, ApiResponse<string>>,
-        IRequestHandler<DeleteMessageCommand, ApiResponse<string>>
+        IRequestHandler<DeleteMessageCommand, ApiResponse<string>>,
+        IRequestHandler<UpdateMessageCommand, ApiResponse<string>>
     {
         #region Fields
         private readonly IChatService _chatService;
@@ -119,9 +120,9 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                     SentAt = DateTimeOffset.UtcNow.ToLocalTime(),
                 };
 
-                var messageMapper = new SendMessageDto
+                var messageMapper = new MessageDto
                 (
-                    message.Id,
+                    message.Id.ToString(),
                     message.ChatId,
                     message.SenderId,
                     message.Type,
@@ -129,9 +130,18 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                     message.FilePath,
                     message.Duration,
                     message.SentAt,
-                    false,
-                    false
+                    message.IsEdited,
+                    message.IsDeleted
                 );
+
+                var updatedDto = new ChatMemberUpdatedDto
+                (
+                    chat.Id.ToString(),
+                    chat.LastMessage!.Content!,
+                    chat.LastMessage.SentAt,
+                    chat.LastMessage.Type
+                );
+                var chatMembersIds = chat.ChatMembers.Select(cm => cm.UserId.ToString()).ToList();
 
                 var result3 = await _messageService.AddMessageAsync(message);
                 if (result3 == "Success")
@@ -149,6 +159,8 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                     await _messageNotifier.NotifyMessageAsync(messageMapper);
                     // Increment unread message count for the receiver
                     await _messageNotifier.NotifyUnreadIncrementAsync(chat.Id);
+                    // Notify chat members about the new message
+                    await _messageNotifier.NotifyChatMembersUpdatedAsync(chatMembersIds, updatedDto);
 
                     await _transactionService.CommitAsync();
                     return Success<string>(_stringLocalizer[SharedResourcesKeys.MessageSentSuccessfully]);
@@ -173,12 +185,59 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
             if (message.SenderId != currentUserId)
                 return Unauthorized<string>(_stringLocalizer[SharedResourcesKeys.UnauthorizedToDeleteMessage]);
             var result = await _messageService.DeleteMessageAsync(message);
-            return result switch
+            if (result == "Success")
             {
-                "ChatNotFound" => NotFound<string>(_stringLocalizer[SharedResourcesKeys.ChatNotFound]),
-                "Failed" => BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToDeleteMessage]),
-                _ => Deleted<string>(_stringLocalizer[SharedResourcesKeys.MessageDeletedSuccessfully])
-            };
+                await _messageNotifier.NotifyDeletedMessageAsync(message.ChatId, message.Id);
+                return Deleted<string>(_stringLocalizer[SharedResourcesKeys.MessageDeletedSuccessfully]);
+            }
+            else if (result == "ChatNotFound")
+                return NotFound<string>(_stringLocalizer[SharedResourcesKeys.ChatNotFound]);
+            else
+                return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToDeleteMessage]);
+        }
+
+        public async Task<ApiResponse<string>> Handle(UpdateMessageCommand request, CancellationToken cancellationToken)
+        {
+            var currentUserId = _currentUserService.GetUserId();
+            var message = await _messageService.GetMessageByIdAsync(request.MessageId);
+            if (message == null)
+                return NotFound<string>(_stringLocalizer[SharedResourcesKeys.MessageNotFound]);
+
+            if (message.SenderId != currentUserId)
+                return Unauthorized<string>(_stringLocalizer[SharedResourcesKeys.UnauthorizedToUpdateMessage]);
+
+            if (message.Content == request.NewContent)
+                return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.NoChangesDetected]);
+
+            var elapsed = DateTime.UtcNow - message.SentAt;
+            if (elapsed > TimeSpan.FromMinutes(15))
+                return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.EditTimeExpired]);
+
+            message.Content = request.NewContent;
+            message.IsEdited = true;
+
+            var result = await _messageService.UpdateMessageAsync(message);
+            if (result == "Success")
+            {
+                var messageMapper = new MessageDto
+                (
+                    message.Id.ToString(),
+                    message.ChatId,
+                    message.SenderId,
+                    message.Type,
+                    message.Content,
+                    message.FilePath,
+                    message.Duration,
+                    message.SentAt,
+                    message.IsEdited,
+                    message.IsDeleted
+                );
+
+                // Notify the chat members about the updated message
+                await _messageNotifier.NotifyUpdatedMessageAsync(messageMapper);
+                return Edit<string>(_stringLocalizer[SharedResourcesKeys.MessageUpdatedSuccessfully]);
+            }
+            return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToUpdateMessage]);
         }
         #endregion
     }

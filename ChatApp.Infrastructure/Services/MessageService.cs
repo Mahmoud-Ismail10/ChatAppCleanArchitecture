@@ -75,6 +75,20 @@ namespace ChatApp.Infrastructure.Services
             return await _messageRepository.GetTableNoTracking()
                 .FirstOrDefaultAsync(m => m.Id == messageId);
         }
+
+        public async Task<string> UpdateMessageAsync(Message message)
+        {
+            try
+            {
+                await _messageRepository.UpdateAsync(message);
+                return "Success";
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error in updating message : {Message}", ex.InnerException?.Message ?? ex.Message);
+                return "Failed";
+            }
+        }
         #endregion
     }
 }

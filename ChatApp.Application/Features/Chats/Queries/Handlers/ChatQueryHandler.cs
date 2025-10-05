@@ -16,11 +16,13 @@ namespace ChatApp.Application.Features.Chats.Queries.Handlers
         private readonly ICurrentUserService _currentUserService;
         private readonly IChatMemberService _chatMemberService;
         private readonly IChatService _chatService;
+        private readonly IMessageNotifier _messageNotifier;
         #endregion
 
         #region Constructors
         public ChatQueryHandler(IStringLocalizer<SharedResources> stringLocalizer,
             IChatService chatService,
+            IMessageNotifier messageNotifier,
             IChatMemberService chatMemberService,
             ICurrentUserService currentUserService) : base(stringLocalizer)
         {
@@ -28,6 +30,7 @@ namespace ChatApp.Application.Features.Chats.Queries.Handlers
             _chatMemberService = chatMemberService;
             _stringLocalizer = stringLocalizer;
             _chatService = chatService;
+            _messageNotifier = messageNotifier;
         }
         #endregion
 
@@ -65,13 +68,14 @@ namespace ChatApp.Application.Features.Chats.Queries.Handlers
 
             var messages = messagesQuery
                 .OrderBy(m => m.SentAt)
-                .Select(m => new MessageDto(
+                .Select(m => new MessageReceivedDto(
                     m.Id,
                     m.SenderId,
                     m.Type,
                     m.Content,
                     m.FilePath,
                     m.Duration,
+                    m.IsEdited,
                     m.SentAt
                 )).ToList();
 
@@ -82,7 +86,17 @@ namespace ChatApp.Application.Features.Chats.Queries.Handlers
                 chatImageUrl,
                 messages
             );
-            await _chatMemberService.MarkAsReadAsync(request.ChatMemberId, currentUserId);
+            await _chatMemberService.MarkAsReadAsync(request.ChatMemberId);
+
+            var readDto = new ChatReadDto
+            (
+                chat.Id.ToString(),
+                currentUserId.ToString(),
+                chatMember.LastReadMessageAt
+            );
+
+            // Notify other members in the chat that messages have been read
+            await _messageNotifier.NotifyChatReadAsync(readDto);
             return Success(response);
         }
         #endregion

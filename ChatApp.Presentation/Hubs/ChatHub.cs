@@ -39,7 +39,7 @@ namespace ChatApp.Presentation.Hubs
             foreach (var chat in chats)
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, chat!.Id.ToString());
-                await Clients.Group(chat.Id.ToString()).SendAsync("UserOnline", currentUserId);
+                await Clients.Group(chat.Id.ToString()).SendAsync("UserOnline", currentUserId.ToString());
             }
 
             await base.OnConnectedAsync();
@@ -65,7 +65,7 @@ namespace ChatApp.Presentation.Hubs
                     {
                         foreach (var chat in chats)
                         {
-                            await Clients.Group(chat!.Id.ToString()).SendAsync("UserOffline", currentUserId, user!.LastSeenAt);
+                            await Clients.Group(chat!.Id.ToString()).SendAsync("UserOffline", currentUserId.ToString(), user!.LastSeenAt);
                         }
                     }
                 }

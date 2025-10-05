@@ -22,5 +22,12 @@ namespace ChatApp.Presentation.Controllers
             var result = await Mediator.Send(new DeleteMessageCommand(id));
             return NewResult(result);
         }
+
+        [HttpPut(Router.Message.UpdateMessage)]
+        public async Task<IActionResult> UpdateMessage([FromBody] UpdateMessageCommand command)
+        {
+            var result = await Mediator.Send(command);
+            return NewResult(result);
+        }
     }
 }

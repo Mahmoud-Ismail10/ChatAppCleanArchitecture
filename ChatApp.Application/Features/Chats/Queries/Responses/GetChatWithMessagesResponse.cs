@@ -7,16 +7,17 @@ namespace ChatApp.Application.Features.Chats.Queries.Responses
         bool IsGroup,
         string? ChatName,
         string? ChatImageUrl,
-        IReadOnlyList<MessageDto?> Messages
+        IReadOnlyList<MessageReceivedDto?> Messages
     );
 
-    public record MessageDto(
+    public record MessageReceivedDto(
         Guid MessageId,
         Guid SenderId,
         MessageType Type,
         string? Content,
         string? FilePath,
         int? Duration,
+        bool IsEdited,
         DateTimeOffset SentAt
     );
 }

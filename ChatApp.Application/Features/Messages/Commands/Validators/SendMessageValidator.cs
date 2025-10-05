@@ -29,7 +29,8 @@ namespace ChatApp.Application.Features.Messages.Commands.Validators
             {
                 RuleFor(x => x.MessageContent)
                     .NotEmpty().WithMessage(_stringLocalizer[SharedResourcesKeys.NotEmpty])
-                    .NotNull().WithMessage(_stringLocalizer[SharedResourcesKeys.Required]);
+                    .NotNull().WithMessage(_stringLocalizer[SharedResourcesKeys.Required])
+                    .MaximumLength(1000).WithMessage(_stringLocalizer[SharedResourcesKeys.MaxLength].Value.Replace("{MaxLength}", "1000"));
             });
         }
         #endregion

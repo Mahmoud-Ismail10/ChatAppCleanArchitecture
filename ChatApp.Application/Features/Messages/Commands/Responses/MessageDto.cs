@@ -2,8 +2,8 @@
 
 namespace ChatApp.Application.Features.Messages.Commands.Responses
 {
-    public record SendMessageDto(
-        Guid Id,
+    public record MessageDto(
+        string Id,
         Guid ChatId,
         Guid SenderId,
         MessageType Type,

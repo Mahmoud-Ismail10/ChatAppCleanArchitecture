@@ -78,6 +78,14 @@
         public const string NoProfileImageToDelete = "NoProfileImageToDelete";
         public const string FailedToUpdateProfileImage = "FailedToUpdateProfileImage";
         public const string NoImageProvided = "NoImageProvided";
+        public const string MaxLength = "MaxLength";
+        public const string UnauthorizedToUpdateMessage = "UnauthorizedToUpdateMessage";
+        public const string NoChangesDetected = "NoChangesDetected";
+        public const string MessageUpdatedSuccessfully = "MessageUpdatedSuccessfully";
+        public const string FailedToUpdateMessage = "FailedToUpdateMessage";
+        public const string NewContent = "NewContent";
+        public const string Email = "Email";
+        public const string EditTimeExpired = "EditTimeExpired";
 
     }
 }

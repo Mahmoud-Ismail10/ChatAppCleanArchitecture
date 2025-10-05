@@ -132,19 +132,22 @@ namespace ChatApp.Infrastructure.Services
                                               .FirstOrDefaultAsync();
         }
 
-        public async Task MarkAsReadAsync(Guid chatMemberId, Guid userId)
+        public async Task MarkAsReadAsync(Guid chatMemberId)
         {
             try
             {
                 var chatMember = await _chatMemberRepository.GetTableAsTracking()
                         .FirstOrDefaultAsync(cm => cm.Id == chatMemberId);
 
-                if (chatMember == null) throw new Exception(_stringLocalizer[SharedResourcesKeys.ChatNotFound]);
+                if (chatMember == null)
+                    throw new Exception(_stringLocalizer[SharedResourcesKeys.ChatNotFound]);
 
-                chatMember.LastReadMessageAt = DateTimeOffset.UtcNow.ToLocalTime();
+                if (chatMember.Chat!.Messages.Any())
+                    chatMember.LastReadMessageAt = chatMember.Chat.Messages.Max(m => m.SentAt);
+                else
+                    chatMember.LastReadMessageAt = DateTimeOffset.UtcNow;
+
                 await _chatMemberRepository.UpdateAsync(chatMember);
-                // Notify other members in the chat that messages have been read
-                await _messageNotifier.NotifyChatReadAsync(chatMember.ChatId, userId);
             }
             catch (Exception ex)
             {

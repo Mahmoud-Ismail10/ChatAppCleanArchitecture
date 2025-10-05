@@ -42,7 +42,7 @@ namespace ChatApp.Application.Features.Users.Commands.Handlers
 
             var result = await _userService.UpdateUserAsync(user);
             if (result == "Success")
-                return Success<string>(_stringLocalizer[SharedResourcesKeys.ProfileUpdatedSuccessfully]);
+                return Edit<string>(_stringLocalizer[SharedResourcesKeys.ProfileUpdatedSuccessfully]);
             return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToUpdateProfile]);
         }
 
@@ -55,7 +55,7 @@ namespace ChatApp.Application.Features.Users.Commands.Handlers
             var result = await _userService.UpdateProfileImageAsync(user, request.ProfileImage);
             return result switch
             {
-                "Success" => Success<string>(_stringLocalizer[SharedResourcesKeys.ProfileImageUpdatedSuccessfully]),
+                "Success" => Edit<string>(_stringLocalizer[SharedResourcesKeys.ProfileImageUpdatedSuccessfully]),
                 "NoImageProvided" => BadRequest<string>(_stringLocalizer[SharedResourcesKeys.NoImageProvided]),
                 _ => BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToUpdateProfileImage])
             };
@@ -70,7 +70,7 @@ namespace ChatApp.Application.Features.Users.Commands.Handlers
                 return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.NoProfileImageToDelete]);
             var result = await _userService.DeleteProfileImageAsync(user);
             if (result == "Success")
-                return Success<string>(_stringLocalizer[SharedResourcesKeys.ProfileImageDeletedSuccessfully]);
+                return Deleted<string>(_stringLocalizer[SharedResourcesKeys.ProfileImageDeletedSuccessfully]);
             return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToDeleteProfileImage]);
         }
         #endregion
