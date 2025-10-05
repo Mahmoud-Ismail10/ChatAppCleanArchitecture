@@ -109,6 +109,7 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
 
                 var message = new Message
                 {
+                    Id = Guid.NewGuid(),
                     ChatId = chat!.Id,
                     SenderId = currentUserId,
                     Content = request.MessageContent,
@@ -120,7 +121,7 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
 
                 var messageMapper = new SendMessageDto
                 (
-                    Guid.NewGuid(),
+                    message.Id,
                     message.ChatId,
                     message.SenderId,
                     message.Type,

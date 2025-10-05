@@ -39,6 +39,7 @@
             public const string Prefix = Rule + "messages/";
             public const string SendMessage = Prefix + "sendMessage";
             public const string DeleteMessage = Prefix + "deleteMessage/" + SingleRoute;
+            public const string UpdateMessage = Prefix + "updateMessage";
         }
 
         public static class Chat
