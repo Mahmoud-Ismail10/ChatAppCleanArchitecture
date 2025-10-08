@@ -24,6 +24,7 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
         private readonly IChatMemberService _chatMemberService;
         private readonly ITransactionService _transactionService;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IMessageStatusService _messageStatusService;
         private readonly IStringLocalizer<SharedResources> _stringLocalizer;
         #endregion
 
@@ -36,6 +37,7 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
             IChatMemberService chatMemberService,
             ITransactionService transactionService,
             ICurrentUserService currentUserService,
+            IMessageStatusService MessageStatusService,
             IStringLocalizer<SharedResources> stringLocalizer) : base(stringLocalizer)
         {
             _chatService = chatService;
@@ -45,6 +47,7 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
             _chatMemberService = chatMemberService;
             _transactionService = transactionService;
             _currentUserService = currentUserService;
+            _messageStatusService = MessageStatusService;
             _stringLocalizer = stringLocalizer;
         }
         #endregion
@@ -120,6 +123,9 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                     SentAt = DateTimeOffset.UtcNow.ToLocalTime(),
                 };
 
+                var messageStatuses = await _messageStatusService.CreateMessageStatusesAsync(chat.Id, currentUserId, message.Id);
+                message.MessageStatuses = messageStatuses;
+
                 var messageMapper = new MessageDto
                 (
                     message.Id.ToString(),
@@ -131,8 +137,7 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                     message.Duration,
                     message.SentAt,
                     message.IsEdited,
-                    message.IsDeleted
-                );
+                    message.IsDeleted);
 
                 var updatedDto = new ChatMemberUpdatedDto
                 (
@@ -230,11 +235,22 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                     message.Duration,
                     message.SentAt,
                     message.IsEdited,
-                    message.IsDeleted
-                );
+                    message.IsDeleted);
+
+                var updatedDto = new ChatMemberUpdatedDto
+                 (
+                    message.ChatId.ToString(),
+                    message.Content,
+                    message.SentAt,
+                    message.Type
+                 );
+                var chatMembersIds = new List<string> { currentUserId.ToString() };
 
                 // Notify the chat members about the updated message
                 await _messageNotifier.NotifyUpdatedMessageAsync(messageMapper);
+                // Notify chat members about the updated message
+                await _messageNotifier.NotifyChatMembersUpdatedAsync(chatMembersIds, updatedDto);
+
                 return Edit<string>(_stringLocalizer[SharedResourcesKeys.MessageUpdatedSuccessfully]);
             }
             return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToUpdateMessage]);

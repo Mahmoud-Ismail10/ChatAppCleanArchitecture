@@ -86,6 +86,7 @@
         public const string NewContent = "NewContent";
         public const string Email = "Email";
         public const string EditTimeExpired = "EditTimeExpired";
+        public const string UnauthorizedToGetMessageStatuses = "UnauthorizedToGetMessageStatuses";
 
     }
 }

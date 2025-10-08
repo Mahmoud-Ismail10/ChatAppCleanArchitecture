@@ -369,4 +369,7 @@
   <data name="EditTimeExpired" xml:space="preserve">
     <value>Edit time has expired.</value>
   </data>
+  <data name="UnauthorizedToGetMessageStatuses" xml:space="preserve">
+    <value>Unauthorized to get message statuses</value>
+  </data>
 </root>

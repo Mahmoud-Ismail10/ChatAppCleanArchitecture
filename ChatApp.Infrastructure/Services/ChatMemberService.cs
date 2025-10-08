@@ -2,6 +2,7 @@
 using ChatApp.Application.Resources;
 using ChatApp.Application.Services.Contracts;
 using ChatApp.Domain.Entities;
+using ChatApp.Domain.Enums;
 using ChatApp.Domain.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
@@ -13,16 +14,19 @@ namespace ChatApp.Infrastructure.Services
     {
         #region Fields
         private readonly IChatMemberRepository _chatMemberRepository;
+        private readonly IMessageStatusRepository _messageStatusRepository;
         private readonly IMessageNotifier _messageNotifier;
         private readonly IStringLocalizer<SharedResources> _stringLocalizer;
         #endregion
 
         #region Constructors
         public ChatMemberService(IChatMemberRepository chatMemberRepository,
+            IMessageStatusRepository messageStatusRepository,
             IMessageNotifier messageNotifier,
             IStringLocalizer<SharedResources> stringLocalizer)
         {
             _chatMemberRepository = chatMemberRepository;
+            _messageStatusRepository = messageStatusRepository;
             _messageNotifier = messageNotifier;
             _stringLocalizer = stringLocalizer;
         }
@@ -132,26 +136,44 @@ namespace ChatApp.Infrastructure.Services
                                               .FirstOrDefaultAsync();
         }
 
-        public async Task MarkAsReadAsync(Guid chatMemberId)
+        public async Task<List<MessageStatus?>> MarkAsReadAsync(Guid chatMemberId)
         {
             try
             {
                 var chatMember = await _chatMemberRepository.GetTableAsTracking()
-                        .FirstOrDefaultAsync(cm => cm.Id == chatMemberId);
+                    .Include(cm => cm.Chat!)
+                        .ThenInclude(c => c.Messages)
+                    .FirstOrDefaultAsync(cm => cm.Id == chatMemberId);
 
                 if (chatMember == null)
                     throw new Exception(_stringLocalizer[SharedResourcesKeys.ChatNotFound]);
 
-                if (chatMember.Chat!.Messages.Any())
-                    chatMember.LastReadMessageAt = chatMember.Chat.Messages.Max(m => m.SentAt);
-                else
-                    chatMember.LastReadMessageAt = DateTimeOffset.UtcNow;
+                var messageIds = chatMember.Chat!.Messages.Select(m => m.Id).ToList();
+
+                var unreadStatuses = await _messageStatusRepository.GetTableAsTracking()
+                    .Include(ms => ms.Message)
+                    .Where(ms => messageIds.Contains(ms.MessageId) &&
+                                 ms.UserId == chatMember.UserId &&
+                                 ms.Status == MessageState.Delivered)
+                    .ToListAsync();
+
+                foreach (var status in unreadStatuses)
+                {
+                    status.Status = MessageState.Read;
+                    status.ReadAt = DateTimeOffset.UtcNow.ToLocalTime();
+                }
+
+                if (unreadStatuses.Any())
+                    await _messageStatusRepository.UpdateRangeAsync(unreadStatuses);
 
                 await _chatMemberRepository.UpdateAsync(chatMember);
+
+                return unreadStatuses!;
             }
             catch (Exception ex)
             {
                 Log.Error("Error in mark messages as read : {Message}", ex.InnerException?.Message ?? ex.Message);
+                return null!;
             }
         }
 

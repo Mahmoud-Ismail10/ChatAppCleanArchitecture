@@ -13,6 +13,7 @@
   <ItemGroup>
     <Folder Include="Features\Authentication\Queries\" />
     <Folder Include="Features\Chats\Commands\" />
+    <Folder Include="Features\MessageStatuses\Commands\" />
     <Folder Include="Features\Messages\Queries\" />
   </ItemGroup>
 

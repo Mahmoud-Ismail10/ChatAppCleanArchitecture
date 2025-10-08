@@ -24,6 +24,7 @@ namespace ChatApp.Infrastructure
             services.AddTransient<IMessageService, MessageService>();
             services.AddTransient<IOnlineUserService, OnlineUserService>();
             services.AddTransient<ITransactionService, TransactionService>();
+            services.AddTransient<IMessageStatusService, MessageStatusService>();
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IChatMemberRepository, ChatMemberRepository>();
@@ -32,6 +33,7 @@ namespace ChatApp.Infrastructure
             services.AddTransient<IContactRepository, ContactRepository>();
             services.AddTransient<IMessageRepository, MessageRepository>();
             services.AddTransient<ITransactionRepository, TransactionRepository>();
+            services.AddTransient<IMessageStatusRepository, MessageStatusRepository>();
             services.AddTransient(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
             return services;
         }

@@ -9,6 +9,7 @@ namespace ChatApp.Application.Services.Contracts
         Task<int> CountAsync(Expression<Func<Message, bool>> predicate);
         Task<string> DeleteMessageAsync(Message message);
         Task<Message?> GetMessageByIdAsync(Guid messageId);
+        Task<Guid> GetSenderIdAsync(Guid messageId);
         Task<string> UpdateMessageAsync(Message message);
     }
 }

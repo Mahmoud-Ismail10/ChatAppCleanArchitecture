@@ -11,7 +11,7 @@ namespace ChatApp.Infrastructure.Data.Configurations
             builder.Property(ms => ms.Status)
                 .HasConversion(
                     ms => ms.ToString(),
-                    ms => (Domain.Enums.MessageStatus)Enum.Parse(typeof(Domain.Enums.MessageStatus), ms!))
+                    ms => (Domain.Enums.MessageState)Enum.Parse(typeof(Domain.Enums.MessageState), ms!))
                 .IsRequired();
 
             builder.Property(ms => ms.DeliveredAt)

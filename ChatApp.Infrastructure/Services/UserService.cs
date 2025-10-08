@@ -1,4 +1,5 @@
-﻿using ChatApp.Application.Services.Contracts;
+﻿using ChatApp.Application.Features.Authentication.Commands.Responses;
+using ChatApp.Application.Services.Contracts;
 using ChatApp.Domain.Entities;
 using ChatApp.Domain.Repositories.Contracts;
 using Microsoft.AspNetCore.Http;
@@ -123,6 +124,20 @@ namespace ChatApp.Infrastructure.Services
         {
             return !await _userRepository.GetTableNoTracking()
                 .AnyAsync(u => u.PhoneNumber == phoneNumber, cancellationToken);
+        }
+
+        public async Task<List<UserDto>> GetUsersByIdsAsync(IEnumerable<Guid> userIds)
+        {
+            return await _userRepository.GetTableNoTracking()
+                .Where(u => userIds.Contains(u.Id))
+                .Select(u => new UserDto
+                (
+                    u.Id,
+                    u.Name,
+                    u.PhoneNumber,
+                    u.Email,
+                    u.ProfileImageUrl
+                )).ToListAsync();
         }
         #endregion
     }

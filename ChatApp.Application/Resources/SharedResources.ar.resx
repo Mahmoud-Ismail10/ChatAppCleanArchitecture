@@ -369,4 +369,7 @@
   <data name="EditTimeExpired" xml:space="preserve">
     <value>انتهى وقت التعديل.</value>
   </data>
+  <data name="UnauthorizedToGetMessageStatuses" xml:space="preserve">
+    <value>غير مصرح لك بعرض حالات الرسالة</value>
+  </data>
 </root>

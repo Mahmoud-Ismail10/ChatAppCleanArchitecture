@@ -8,6 +8,7 @@ namespace ChatApp.Application.Services.Contracts
         Task NotifyChatMembersUpdatedAsync(List<string> chatMembersIds, ChatMemberUpdatedDto updatedDto);
         Task NotifyChatReadAsync(ChatReadDto readDto);
         Task NotifyDeletedMessageAsync(Guid chatId, Guid messageId);
+        Task NotifyMarkAsReadAsync(Guid currentUserId, Guid messageId);
         Task NotifyMessageAsync(MessageDto message);
         Task NotifyUnreadIncrementAsync(Guid chatId);
         Task NotifyUpdatedMessageAsync(MessageDto message);

@@ -10,12 +10,18 @@ namespace ChatApp.Presentation.Helper
     {
         #region Fields
         private readonly IHubContext<ChatHub> _hub;
+        private readonly IMessageStatusService _messageStatusService;
+        private readonly IMessageService _messageService;
         #endregion
 
         #region Constructors
-        public MessageNotifier(IHubContext<ChatHub> hub)
+        public MessageNotifier(IHubContext<ChatHub> hub,
+            IMessageStatusService messageStatusService,
+            IMessageService messageService)
         {
             _hub = hub;
+            _messageStatusService = messageStatusService;
+            _messageService = messageService;
         }
         #endregion
 
@@ -32,7 +38,8 @@ namespace ChatApp.Presentation.Helper
 
         public async Task NotifyUnreadIncrementAsync(Guid chatId)
         {
-            await _hub.Clients.Group(chatId.ToString()).SendAsync("UnreadCountIncremented", new { ChatId = chatId.ToString() });
+            await _hub.Clients.Group(chatId.ToString())
+                .SendAsync("UnreadCountIncremented", new { ChatId = chatId.ToString() });
         }
 
         public async Task NotifyChatReadAsync(ChatReadDto readDto)
@@ -47,7 +54,44 @@ namespace ChatApp.Presentation.Helper
 
         public async Task NotifyDeletedMessageAsync(Guid chatId, Guid messageId)
         {
-            await _hub.Clients.Group(chatId.ToString()).SendAsync("MessageDeleted", new { MessageId = messageId.ToString() });
+            await _hub.Clients.Group(chatId.ToString())
+                .SendAsync("MessageDeleted", new { MessageId = messageId.ToString() });
+        }
+
+        public async Task NotifyMarkAsDeliveredAsync(Guid currentUserserId, Guid messageId)
+        {
+            var statusDto = await _messageStatusService.MarkAsDeliveredAsync(messageId, currentUserserId);
+            var senderId = await _messageService.GetSenderIdAsync(messageId);
+
+            await _hub.Clients.User(senderId.ToString())
+                .SendAsync("MessageDelivered", messageId.ToString(), statusDto);
+        }
+
+        public async Task NotifyMarkAsReadAsync(Guid currentUserId, Guid messageId)
+        {
+            var statusDto = await _messageStatusService.MarkAsReadAsync(messageId, currentUserId);
+            var senderId = await _messageService.GetSenderIdAsync(messageId);
+
+            await _hub.Clients.User(senderId.ToString())
+                .SendAsync("MessageRead", messageId.ToString(), statusDto);
+        }
+
+        public async Task NotifyMarkAsPlayedAsync(Guid currentUserserId, Guid messageId)
+        {
+            var statusDto = await _messageStatusService.MarkAsPlayedAsync(messageId, currentUserserId);
+            var senderId = await _messageService.GetSenderIdAsync(messageId);
+
+            await _hub.Clients.User(senderId.ToString())
+                .SendAsync("MessagePlayed", messageId.ToString(), statusDto);
+        }
+
+        public async Task NotifyMessageStatusesUpdatedAsync(Guid messageId)
+        {
+            var statuses = await _messageStatusService.GetMessageStatusesAsync(messageId);
+            var senderId = await _messageService.GetSenderIdAsync(messageId);
+
+            await _hub.Clients.User(senderId.ToString())
+                .SendAsync("MessageStatusesUpdated", messageId.ToString(), statuses);
         }
         #endregion
     }

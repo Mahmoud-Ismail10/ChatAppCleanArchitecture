@@ -89,6 +89,14 @@ namespace ChatApp.Infrastructure.Services
                 return "Failed";
             }
         }
+
+        public async Task<Guid> GetSenderIdAsync(Guid messageId)
+        {
+            return await _messageRepository.GetTableNoTracking()
+                .Where(m => m.Id == messageId)
+                .Select(m => m.SenderId)
+                .FirstOrDefaultAsync();
+        }
         #endregion
     }
 }

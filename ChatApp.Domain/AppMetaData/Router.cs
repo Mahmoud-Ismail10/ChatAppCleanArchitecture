@@ -48,6 +48,12 @@
             public const string GetChatWithMessages = Prefix + "getChatWithMessages";
         }
 
+        public static class MessageStatus
+        {
+            public const string Prefix = Rule + "messageStatuses/";
+            public const string GetMessageStatuses = Prefix + "getStatuses/" + SingleRoute;
+        }
+
         public static class User
         {
             public const string Prefix = Rule + "users/";

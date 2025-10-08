@@ -22,10 +22,14 @@ namespace ChatApp.Infrastructure.Services
         #region Functions
         public async Task<Chat?> GetChatWithMessagesAsync(Guid chatId)
         {
-            return await _chatRepository.GetTableNoTracking()
-                                        .Include(c => c.Messages)
-                                        .Where(c => c.Id == chatId)
-                                        .FirstOrDefaultAsync();
+            var chat = await _chatRepository.GetTableNoTracking()
+                                            .Include(c => c.Messages)
+                                            .FirstOrDefaultAsync(c => c.Id == chatId);
+
+            if (chat != null)
+                chat.LastMessage = chat.Messages.OrderByDescending(m => m.SentAt).FirstOrDefault();
+
+            return chat;
         }
 
         public async Task<string> CreateChatAsync(Chat chat)

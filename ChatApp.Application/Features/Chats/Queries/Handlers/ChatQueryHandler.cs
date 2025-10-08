@@ -64,7 +64,7 @@ namespace ChatApp.Application.Features.Chats.Queries.Handlers
             var messagesQuery = chat.Messages.AsQueryable();
 
             if (chatMember.DeletedAt.HasValue)
-                messagesQuery = messagesQuery.Where(m => m.SentAt > chatMember.DeletedAt.Value).AsQueryable();
+                messagesQuery = messagesQuery.Where(m => m.SentAt > chatMember.DeletedAt.Value);
 
             var messages = messagesQuery
                 .OrderBy(m => m.SentAt)
@@ -86,17 +86,15 @@ namespace ChatApp.Application.Features.Chats.Queries.Handlers
                 chatImageUrl,
                 messages
             );
-            await _chatMemberService.MarkAsReadAsync(request.ChatMemberId);
 
-            var readDto = new ChatReadDto
-            (
-                chat.Id.ToString(),
-                currentUserId.ToString(),
-                chatMember.LastReadMessageAt
-            );
+            var readStatuses = await _chatMemberService.MarkAsReadAsync(request.ChatMemberId);
 
-            // Notify other members in the chat that messages have been read
-            await _messageNotifier.NotifyChatReadAsync(readDto);
+            // Notify senders of messages in the chat that messages have been read from current user
+            foreach (var status in readStatuses)
+            {
+                await _messageNotifier.NotifyMarkAsReadAsync(currentUserId, status!.MessageId);
+            }
+
             return Success(response);
         }
         #endregion

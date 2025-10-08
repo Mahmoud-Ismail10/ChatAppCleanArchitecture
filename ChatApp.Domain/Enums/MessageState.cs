@@ -1,6 +1,6 @@
 ﻿namespace ChatApp.Domain.Enums
 {
-    public enum MessageStatus
+    public enum MessageState
     {
         Sent = 1,
         Delivered = 2,
