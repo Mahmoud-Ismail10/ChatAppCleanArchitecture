@@ -126,31 +126,25 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                 var messageStatuses = await _messageStatusService.CreateMessageStatusesAsync(chat.Id, currentUserId, message.Id);
                 message.MessageStatuses = messageStatuses;
 
-                var messageMapper = new MessageDto
+                var messageMapper = new ReceiveMessageDto
                 (
                     message.Id.ToString(),
-                    message.ChatId,
-                    message.SenderId,
-                    message.Type,
-                    message.Content,
-                    message.FilePath,
-                    message.Duration,
-                    message.SentAt,
-                    message.IsEdited,
-                    message.IsDeleted);
-
-                var updatedDto = new ChatMemberUpdatedDto
-                (
-                    chat.Id.ToString(),
-                    chat.LastMessage!.Content!,
-                    chat.LastMessage.SentAt,
-                    chat.LastMessage.Type
+                    message.ChatId
                 );
+
                 var chatMembersIds = chat.ChatMembers.Select(cm => cm.UserId.ToString()).ToList();
 
                 var result3 = await _messageService.AddMessageAsync(message);
                 if (result3 == "Success")
                 {
+                    var updatedDto = new ChatMemberUpdatedDto
+                    (
+                        chat.Id.ToString(),
+                        chat.LastMessage!.Content!,
+                        chat.LastMessage.SentAt,
+                        chat.LastMessage.Type
+                    );
+
                     chat.LastMessage = message;
                     chat.LastMessageId = message.Id;
                     var result2 = await _chatService.UpdateChatAsync(chat);

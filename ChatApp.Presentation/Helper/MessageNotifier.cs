@@ -1,5 +1,4 @@
-﻿using ChatApp.Application.Features.Chats.Queries.Responses;
-using ChatApp.Application.Features.Messages.Commands.Responses;
+﻿using ChatApp.Application.Features.Messages.Commands.Responses;
 using ChatApp.Application.Services.Contracts;
 using ChatApp.Presentation.Hubs;
 using Microsoft.AspNetCore.SignalR;
@@ -26,7 +25,7 @@ namespace ChatApp.Presentation.Helper
         #endregion
 
         #region Functions
-        public async Task NotifyMessageAsync(MessageDto message)
+        public async Task NotifyMessageAsync(ReceiveMessageDto message)
         {
             await _hub.Clients.Group(message.ChatId.ToString()).SendAsync("ReceiveMessage", message);
         }
@@ -42,11 +41,6 @@ namespace ChatApp.Presentation.Helper
                 .SendAsync("UnreadCountIncremented", new { ChatId = chatId.ToString() });
         }
 
-        public async Task NotifyChatReadAsync(ChatReadDto readDto)
-        {
-            await _hub.Clients.Group(readDto.ChatId).SendAsync("ChatRead", readDto);
-        }
-
         public async Task NotifyChatMembersUpdatedAsync(List<string> chatMembersIds, ChatMemberUpdatedDto updatedDto)
         {
             await _hub.Clients.Users(chatMembersIds).SendAsync("ChatMembersUpdated", updatedDto);
@@ -58,33 +52,37 @@ namespace ChatApp.Presentation.Helper
                 .SendAsync("MessageDeleted", new { MessageId = messageId.ToString() });
         }
 
-        public async Task NotifyMarkAsDeliveredAsync(Guid currentUserserId, Guid messageId)
+        // Invoked when a user opens an application
+        public async Task NotifyMarkAsDeliveredAsync(Guid receiveUserId, Guid messageId)
         {
-            var statusDto = await _messageStatusService.MarkAsDeliveredAsync(messageId, currentUserserId);
+            var statusDto = await _messageStatusService.MarkAsDeliveredAsync(messageId, receiveUserId);
             var senderId = await _messageService.GetSenderIdAsync(messageId);
 
             await _hub.Clients.User(senderId.ToString())
                 .SendAsync("MessageDelivered", messageId.ToString(), statusDto);
         }
 
-        public async Task NotifyMarkAsReadAsync(Guid currentUserId, Guid messageId)
+        // Invoked when a user opens an chat
+        public async Task NotifyMarkAsReadAsync(Guid receiveUserId, Guid messageId)
         {
-            var statusDto = await _messageStatusService.MarkAsReadAsync(messageId, currentUserId);
+            var statusDto = await _messageStatusService.MarkAsReadAsync(messageId, receiveUserId);
             var senderId = await _messageService.GetSenderIdAsync(messageId);
 
             await _hub.Clients.User(senderId.ToString())
                 .SendAsync("MessageRead", messageId.ToString(), statusDto);
         }
 
-        public async Task NotifyMarkAsPlayedAsync(Guid currentUserserId, Guid messageId)
+        // Invoked when a user plays a voice message
+        public async Task NotifyMarkAsPlayedAsync(Guid receiveUserId, Guid messageId)
         {
-            var statusDto = await _messageStatusService.MarkAsPlayedAsync(messageId, currentUserserId);
+            var statusDto = await _messageStatusService.MarkAsPlayedAsync(messageId, receiveUserId);
             var senderId = await _messageService.GetSenderIdAsync(messageId);
 
             await _hub.Clients.User(senderId.ToString())
                 .SendAsync("MessagePlayed", messageId.ToString(), statusDto);
         }
 
+        // Invoked when message statuses are updated in bulk (e.g., multiple messages marked as read)
         public async Task NotifyMessageStatusesUpdatedAsync(Guid messageId)
         {
             var statuses = await _messageStatusService.GetMessageStatusesAsync(messageId);
