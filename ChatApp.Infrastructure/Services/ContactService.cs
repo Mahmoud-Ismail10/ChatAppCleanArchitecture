@@ -33,6 +33,23 @@ namespace ChatApp.Infrastructure.Services
                 return "Failed";
             }
         }
+        public async Task<string> RemoveFromContactsAsync(Guid currentUserId, Guid contactId)
+        {
+            try
+            {
+                var contact = await _contactRepository.GetTableNoTracking()
+                                                      .FirstOrDefaultAsync(c => c.Id == contactId);
+                if (contact == null) return "NotFound";
+                if (contact.UserId != currentUserId) return "Unauthorized";
+                await _contactRepository.DeleteAsync(contact);
+                return "Success";
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error in removing contact : {Message}", ex.InnerException?.Message ?? ex.Message);
+                return "Failed";
+            }
+        }
 
         public async Task<Contact?> GetContactAsync(Guid userId, Guid contactId)
         {

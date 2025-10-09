@@ -32,6 +32,7 @@
             public const string AddToContactsByPhoneNumber = Prefix + "addToContactsByPhoneNumber";
             public const string GetAll = Prefix + "getAll";
             public const string ViewContact = Prefix + "viewContact";
+            public const string RemoveFromContacts = Prefix + "removeFromContacts/" + SingleRoute;
         }
 
         public static class Message

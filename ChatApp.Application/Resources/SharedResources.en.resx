@@ -372,4 +372,16 @@
   <data name="UnauthorizedToGetMessageStatuses" xml:space="preserve">
     <value>Unauthorized to get message statuses</value>
   </data>
+  <data name="FailedToRemoveContact" xml:space="preserve">
+    <value>Failed to remove contact.</value>
+  </data>
+  <data name="ContactRemovedSuccessfully" xml:space="preserve">
+    <value>Contact removed successfully.</value>
+  </data>
+  <data name="UnauthorizedToRemoveContact" xml:space="preserve">
+    <value>Unauthorized to remove contact.</value>
+  </data>
+  <data name="ContactNotFound" xml:space="preserve">
+    <value>Contact not found.</value>
+  </data>
 </root>

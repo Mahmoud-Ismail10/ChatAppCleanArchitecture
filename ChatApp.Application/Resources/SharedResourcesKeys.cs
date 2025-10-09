@@ -87,6 +87,10 @@
         public const string Email = "Email";
         public const string EditTimeExpired = "EditTimeExpired";
         public const string UnauthorizedToGetMessageStatuses = "UnauthorizedToGetMessageStatuses";
+        public const string ContactRemovedSuccessfully = "ContactRemovedSuccessfully";
+        public const string FailedToRemoveContact = "FailedToRemoveContact";
+        public const string UnauthorizedToRemoveContact = "UnauthorizedToRemoveContact";
+        public const string ContactNotFound = "ContactNotFound";
 
     }
 }

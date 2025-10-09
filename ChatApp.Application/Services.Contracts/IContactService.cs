@@ -7,5 +7,6 @@ namespace ChatApp.Application.Services.Contracts
         Task<string> AddToContactAsync(Contact contact);
         Task<IReadOnlyList<Contact?>> GetAllContactsAsync(Guid userId);
         Task<Contact?> GetContactAsync(Guid userId, Guid contactId);
+        Task<string> RemoveFromContactsAsync(Guid currentUserId, Guid contactId);
     }
 }

@@ -5,14 +5,14 @@ using Microsoft.Extensions.Localization;
 
 namespace ChatApp.Application.Features.Contacts.Commands.Validators
 {
-    internal class AddToContactsByPhoneNumberValidators : AbstractValidator<AddToContactsByPhoneNumberCommand>
+    public class RemoveFromContactsValidator : AbstractValidator<AddToContactsByPhoneNumberCommand>
     {
         #region Fields
         private readonly IStringLocalizer<SharedResources> _stringLocalizer;
         #endregion
 
         #region Constructors
-        public AddToContactsByPhoneNumberValidators(IStringLocalizer<SharedResources> stringLocalizer)
+        public RemoveFromContactsValidator(IStringLocalizer<SharedResources> stringLocalizer)
         {
             _stringLocalizer = stringLocalizer;
             ApplyValidationRoles();

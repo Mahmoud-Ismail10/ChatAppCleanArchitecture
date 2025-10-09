@@ -30,5 +30,12 @@ namespace ChatApp.Presentation.Controllers
             var result = await Mediator.Send(query);
             return NewResult(result);
         }
+
+        [HttpDelete(Router.Contact.RemoveFromContacts)]
+        public async Task<IActionResult> RemoveFromContacts([FromRoute] Guid id)
+        {
+            var result = await Mediator.Send(new RemoveFromContactsCommand(id));
+            return NewResult(result);
+        }
     }
 }

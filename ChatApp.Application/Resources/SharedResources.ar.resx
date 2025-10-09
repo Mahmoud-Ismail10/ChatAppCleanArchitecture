@@ -372,4 +372,16 @@
   <data name="UnauthorizedToGetMessageStatuses" xml:space="preserve">
     <value>غير مصرح لك بعرض حالات الرسالة</value>
   </data>
+  <data name="FailedToRemoveContact" xml:space="preserve">
+    <value>فشل في إزالة جهة الاتصال.</value>
+  </data>
+  <data name="ContactRemovedSuccessfully" xml:space="preserve">
+    <value>تم إزالة جهة الاتصال بنجاح.</value>
+  </data>
+  <data name="UnauthorizedToRemoveContact" xml:space="preserve">
+    <value>غير مصرح لك بإزالة جهة الاتصال.</value>
+  </data>
+  <data name="ContactNotFound" xml:space="preserve">
+    <value>لم يتم العثور على جهة الاتصال.</value>
+  </data>
 </root>
