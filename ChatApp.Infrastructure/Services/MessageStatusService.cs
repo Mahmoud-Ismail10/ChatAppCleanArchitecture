@@ -138,6 +138,15 @@ namespace ChatApp.Infrastructure.Services
                 );
             }).ToList();
         }
+
+        public async Task<List<Guid>?> GetUndeliveredMessagesAsync(Guid userId)
+        {
+            return await _messageStatusRepository.GetTableNoTracking()
+                .Where(ms => ms.UserId == userId && ms.Status == MessageState.Sent)
+                .Select(ms => ms.MessageId)
+                .ToListAsync();
+        }
+
         #endregion
     }
 }

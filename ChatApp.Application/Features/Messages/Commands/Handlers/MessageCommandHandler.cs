@@ -145,6 +145,9 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                 var result3 = await _messageService.AddMessageAsync(message);
                 if (result3 == "Success")
                 {
+                    chat.LastMessage = message;
+                    chat.LastMessageId = message.Id;
+
                     var updatedDto = new ChatMemberUpdatedDto
                     (
                         chat.Id.ToString(),
@@ -153,8 +156,6 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                         chat.LastMessage.Type
                     );
 
-                    chat.LastMessage = message;
-                    chat.LastMessageId = message.Id;
                     var result2 = await _chatService.UpdateChatAsync(chat);
                     if (result2 != "Success")
                     {

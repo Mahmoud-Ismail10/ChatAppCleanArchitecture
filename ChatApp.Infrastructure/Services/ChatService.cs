@@ -24,6 +24,7 @@ namespace ChatApp.Infrastructure.Services
         {
             var chat = await _chatRepository.GetTableNoTracking()
                                             .Include(c => c.Messages)
+                                            .Include(c => c.ChatMembers)
                                             .FirstOrDefaultAsync(c => c.Id == chatId);
 
             if (chat != null)

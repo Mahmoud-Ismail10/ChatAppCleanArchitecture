@@ -7,6 +7,7 @@ namespace ChatApp.Application.Services.Contracts
     {
         Task<List<MessageStatus>> CreateMessageStatusesAsync(Guid chatId, Guid currentUserId, Guid messageId);
         Task<List<MessageStatusDto>> GetMessageStatusesAsync(Guid messageId);
+        Task<List<Guid>?> GetUndeliveredMessagesAsync(Guid userId);
         Task<MessageStatusDto> MarkAsDeliveredAsync(Guid messageId, Guid userId);
         Task<MessageStatusDto> MarkAsPlayedAsync(Guid messageId, Guid userId);
         Task<MessageStatusDto> MarkAsReadAsync(Guid messageId, Guid userId);
