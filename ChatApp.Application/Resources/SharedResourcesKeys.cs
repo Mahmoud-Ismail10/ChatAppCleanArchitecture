@@ -91,6 +91,8 @@
         public const string FailedToRemoveContact = "FailedToRemoveContact";
         public const string UnauthorizedToRemoveContact = "UnauthorizedToRemoveContact";
         public const string ContactNotFound = "ContactNotFound";
+        public const string AtLeastSelectOneUser = "AtLeastSelectOneUser";
+        public const string GroupCreatedSuccessfully = "GroupCreatedSuccessfully";
 
     }
 }

@@ -40,7 +40,7 @@ namespace ChatApp.Infrastructure.Services
              .Select(cm => new GetAllChatsMemberResponse
              (
                  cm.Chat!.IsGroup
-                     ? Guid.Empty
+                     ? null
                      : cm.Chat.ChatMembers
                          .Where(m => m.UserId != userId)
                          .Select(m => m.Id)

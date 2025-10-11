@@ -47,6 +47,7 @@
         {
             public const string Prefix = Rule + "chats/";
             public const string GetChatWithMessages = Prefix + "getChatWithMessages";
+            public const string CreateGroup = Prefix + "createGroup";
         }
 
         public static class MessageStatus

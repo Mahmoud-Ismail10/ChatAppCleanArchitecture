@@ -126,10 +126,18 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                 var messageStatuses = await _messageStatusService.CreateMessageStatusesAsync(chat.Id, currentUserId, message.Id);
                 message.MessageStatuses = messageStatuses;
 
-                var messageMapper = new ReceiveMessageDto
+                var messageMapper = new MessageDto
                 (
                     message.Id.ToString(),
-                    message.ChatId
+                    message.ChatId,
+                    message.SenderId,
+                    message.Type,
+                    message.Content,
+                    message.FilePath,
+                    message.Duration,
+                    message.SentAt,
+                    message.IsEdited,
+                    message.IsDeleted
                 );
 
                 var chatMembersIds = chat.ChatMembers.Select(cm => cm.UserId.ToString()).ToList();

@@ -25,7 +25,7 @@ namespace ChatApp.Presentation.Helper
         #endregion
 
         #region Functions
-        public async Task NotifyMessageAsync(ReceiveMessageDto message)
+        public async Task NotifyMessageAsync(MessageDto message)
         {
             await _hub.Clients.Group(message.ChatId.ToString()).SendAsync("ReceiveMessage", message);
         }

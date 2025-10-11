@@ -384,4 +384,10 @@
   <data name="ContactNotFound" xml:space="preserve">
     <value>لم يتم العثور على جهة الاتصال.</value>
   </data>
+  <data name="AtLeastSelectOneUser" xml:space="preserve">
+    <value>يجب اختيار مستخدم واحد على الأقل.</value>
+  </data>
+  <data name="GroupCreatedSuccessfully" xml:space="preserve">
+    <value>تم إنشاء المجموعة بنجاح.</value>
+  </data>
 </root>
