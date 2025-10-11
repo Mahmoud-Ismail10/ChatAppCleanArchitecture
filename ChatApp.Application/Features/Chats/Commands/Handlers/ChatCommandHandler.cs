@@ -47,7 +47,7 @@ namespace ChatApp.Application.Features.Chats.Commands.Handlers
                     new ChatMember
                     {
                         UserId = currentUserId,
-                        Role = Role.Admin,
+                        Role = Role.Owner,
                         Status = MemberStatus.Active,
                         JoinedAt = DateTimeOffset.UtcNow.ToLocalTime()
                     }

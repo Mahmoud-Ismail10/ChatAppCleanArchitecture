@@ -30,6 +30,13 @@ namespace ChatApp.Presentation.Controllers
             var result = await Mediator.Send(new PinOrUnpinChatCommand(id));
             return NewResult(result);
         }
+
+        [HttpPut(Router.ChatMember.MakeAsAdminOrUnadmin)]
+        public async Task<IActionResult> MakeAsAdminOrUnadmin([FromRoute] Guid id)
+        {
+            var result = await Mediator.Send(new MakeAsAdminOrUnadminCommand(id));
+            return NewResult(result);
+        }
     }
 }
 

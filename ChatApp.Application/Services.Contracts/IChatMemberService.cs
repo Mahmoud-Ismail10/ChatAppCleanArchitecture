@@ -11,6 +11,8 @@ namespace ChatApp.Application.Services.Contracts
         Task<ChatMember?> GetChatMemberByIdAsync(Guid chatMemberId);
         Task<bool> IsDeletedFromAllMembersAsync(Guid chatId);
         Task<bool> IsMemberOfChatAsync(Guid userId, Guid chatId);
+        Task<bool> IsOwnerOrAdminAsync(Guid userId, Guid chatId);
+        Task<string> MakeAsAdminOrUnadminAsync(ChatMember chatMember);
         Task<List<MessageStatus?>> MarkAsReadAsync(Guid chatMemberId);
         Task<string> PinOrUnpinChatAsync(Guid chatMemberId);
         Task<string> RestoreDeletedChatMembersAsync(ChatMember? chatMember);

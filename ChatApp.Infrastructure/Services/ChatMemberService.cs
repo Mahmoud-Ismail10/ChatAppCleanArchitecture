@@ -233,6 +233,33 @@ namespace ChatApp.Infrastructure.Services
             return await _chatMemberRepository.GetTableNoTracking()
                                               .AnyAsync(cm => cm.UserId == userId && cm.ChatId == chatId && !cm.IsDeleted);
         }
+
+        public async Task<string> MakeAsAdminOrUnadminAsync(ChatMember chatMember)
+        {
+            try
+            {
+                if (chatMember.Role == Role.Member)
+                    chatMember.Role = Role.Admin;
+                else
+                    chatMember.Role = Role.Member;
+
+                await _chatMemberRepository.UpdateAsync(chatMember);
+                return "Success";
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error in changing role of chat member: {Message}", ex.InnerException?.Message ?? ex.Message);
+                return "Failed";
+            }
+        }
+
+        public async Task<bool> IsOwnerOrAdminAsync(Guid userId, Guid chatId)
+        {
+            var chatMember = await _chatMemberRepository.GetTableNoTracking()
+                                              .FirstOrDefaultAsync(cm => cm.UserId == userId && cm.ChatId == chatId && !cm.IsDeleted);
+            if (chatMember == null) return false;
+            return chatMember.Role == Role.Owner || chatMember.Role == Role.Admin;
+        }
         #endregion
     }
 }

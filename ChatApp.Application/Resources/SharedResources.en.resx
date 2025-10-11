@@ -390,4 +390,16 @@
   <data name="GroupCreatedSuccessfully" xml:space="preserve">
     <value>Group created successfully.</value>
   </data>
+  <data name="MemberNotFound" xml:space="preserve">
+    <value>Member not found</value>
+  </data>
+  <data name="NotAllowedToChangeRole" xml:space="preserve">
+    <value>You are not allowed to change roles.</value>
+  </data>
+  <data name="MemberRoleChangedSuccessfully" xml:space="preserve">
+    <value>Member role changed successfully.</value>
+  </data>
+  <data name="FailedToChangeMemberRole" xml:space="preserve">
+    <value>Failed to change member role.</value>
+  </data>
 </root>

@@ -93,6 +93,10 @@
         public const string ContactNotFound = "ContactNotFound";
         public const string AtLeastSelectOneUser = "AtLeastSelectOneUser";
         public const string GroupCreatedSuccessfully = "GroupCreatedSuccessfully";
+        public const string MemberNotFound = "MemberNotFound";
+        public const string NotAllowedToChangeRole = "NotAllowedToChangeRole";
+        public const string FailedToChangeMemberRole = "FailedToChangeMemberRole";
+        public const string MemberRoleChangedSuccessfully = "MemberRoleChangedSuccessfully";
 
     }
 }

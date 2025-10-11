@@ -24,6 +24,7 @@
             public const string GetAll = Prefix + "getAll";
             public const string DeleteForMe = Prefix + "deleteForMe/" + SingleRoute;
             public const string PinOrUnpin = Prefix + "pinOrUnpin/" + SingleRoute;
+            public const string MakeAsAdminOrUnadmin = Prefix + "makeAsAdminOrUnadmin/" + SingleRoute;
         }
 
         public static class Contact
