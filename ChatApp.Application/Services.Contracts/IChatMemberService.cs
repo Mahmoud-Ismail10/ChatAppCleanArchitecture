@@ -9,6 +9,7 @@ namespace ChatApp.Application.Services.Contracts
         Task<IReadOnlyList<GetAllChatsMemberResponse>> GetAllChatsMemberAsync(Guid userId);
         Task<ChatMember?> GetAnotherUserInSameChatAsync(Guid currentUserId, Guid chatId);
         Task<ChatMember?> GetChatMemberByIdAsync(Guid chatMemberId);
+        Task<List<Guid>> GetChatMembersIdsAsync(Guid chatId);
         Task<bool> IsDeletedFromAllMembersAsync(Guid chatId);
         Task<bool> IsMemberOfChatAsync(Guid userId, Guid chatId);
         Task<bool> IsOwnerOrAdminAsync(Guid userId, Guid chatId);

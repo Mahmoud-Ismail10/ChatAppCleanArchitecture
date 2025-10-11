@@ -184,6 +184,14 @@ namespace ChatApp.Infrastructure.Services
                                               .FirstOrDefaultAsync(cm => cm.Id == chatMemberId);
         }
 
+        public async Task<List<Guid>> GetChatMembersIdsAsync(Guid chatId)
+        {
+            return await _chatMemberRepository.GetTableNoTracking()
+                                              .Where(cm => cm.ChatId == chatId && !cm.IsDeleted)
+                                              .Select(cm => cm.UserId)
+                                              .ToListAsync();
+        }
+
         public async Task<string> SoftDeleteChatMemberAsync(ChatMember chatMember)
         {
             try

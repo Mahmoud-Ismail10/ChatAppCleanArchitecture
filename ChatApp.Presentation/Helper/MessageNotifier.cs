@@ -38,7 +38,7 @@ namespace ChatApp.Presentation.Helper
         public async Task NotifyUnreadIncrementAsync(Guid chatId)
         {
             await _hub.Clients.Group(chatId.ToString())
-                .SendAsync("UnreadCountIncremented", new { ChatId = chatId.ToString() });
+                .SendAsync("UnreadCountIncremented", chatId.ToString());
         }
 
         public async Task NotifyChatMembersUpdatedAsync(List<string> chatMembersIds, ChatMemberUpdatedDto updatedDto)
@@ -49,7 +49,7 @@ namespace ChatApp.Presentation.Helper
         public async Task NotifyDeletedMessageAsync(Guid chatId, Guid messageId)
         {
             await _hub.Clients.Group(chatId.ToString())
-                .SendAsync("MessageDeleted", new { MessageId = messageId.ToString() });
+                .SendAsync("MessageDeleted", messageId.ToString());
         }
 
         // Invoked when a user opens an application

@@ -1,6 +1,7 @@
 ﻿using ChatApp.Application.Bases;
 using ChatApp.Application.Features.Messages.Commands.Models;
 using ChatApp.Application.Features.Messages.Commands.Responses;
+using ChatApp.Application.Features.MessageStatuses.Queries.Responses;
 using ChatApp.Application.Resources;
 using ChatApp.Application.Services.Contracts;
 using ChatApp.Domain.Entities;
@@ -22,6 +23,7 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
         private readonly IMessageService _messageService;
         private readonly IMessageNotifier _messageNotifier;
         private readonly IChatMemberService _chatMemberService;
+        private readonly IOnlineUserService _onlineUserService;
         private readonly ITransactionService _transactionService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IMessageStatusService _messageStatusService;
@@ -35,6 +37,7 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
             IMessageService messageService,
             IMessageNotifier messageNotifier,
             IChatMemberService chatMemberService,
+            IOnlineUserService onlineUserService,
             ITransactionService transactionService,
             ICurrentUserService currentUserService,
             IMessageStatusService MessageStatusService,
@@ -45,6 +48,7 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
             _messageService = messageService;
             _messageNotifier = messageNotifier;
             _chatMemberService = chatMemberService;
+            _onlineUserService = onlineUserService;
             _transactionService = transactionService;
             _currentUserService = currentUserService;
             _messageStatusService = MessageStatusService;
@@ -137,7 +141,15 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                     message.Duration,
                     message.SentAt,
                     message.IsEdited,
-                    message.IsDeleted
+                    message.IsDeleted,
+                    message.MessageStatuses.Select(ms => new MessageStatusDto(
+                        ms.UserId,
+                        ms.Status,
+                        ms.DeliveredAt,
+                        ms.ReadAt,
+                        ms.PlayedAt,
+                        ms.User!.Name,
+                        ms.User.ProfileImageUrl)).ToList()
                 );
 
                 var chatMembersIds = chat.ChatMembers.Select(cm => cm.UserId.ToString()).ToList();
@@ -169,9 +181,19 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                     await _messageNotifier.NotifyUnreadIncrementAsync(chat.Id);
                     // Notify chat members about the new message
                     await _messageNotifier.NotifyChatMembersUpdatedAsync(chatMembersIds, updatedDto);
+                    // If the receiver is online, mark the message as delivered
+                    var MembersIds = await _chatMemberService.GetChatMembersIdsAsync(message.ChatId);
+
+                    foreach (var memberId in MembersIds)
+                    {
+                        if (memberId == currentUserId) continue;
+
+                        if (_onlineUserService.IsUserOnline(memberId))
+                            await _messageNotifier.NotifyMarkAsDeliveredAsync(memberId, message.Id);
+                    }
 
                     await _transactionService.CommitAsync();
-                    return Success<string>(_stringLocalizer[SharedResourcesKeys.MessageSentSuccessfully]);
+                    return Success<string>(_stringLocalizer[SharedResourcesKeys.MessageSentSuccessfully], messageMapper);
                 }
                 await _transactionService.RollBackAsync();
                 return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToSendMessage]);
@@ -238,7 +260,15 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                     message.Duration,
                     message.SentAt,
                     message.IsEdited,
-                    message.IsDeleted);
+                    message.IsDeleted,
+                    message.MessageStatuses.Select(ms => new MessageStatusDto(
+                        ms.UserId,
+                        ms.Status,
+                        ms.DeliveredAt,
+                        ms.ReadAt,
+                        ms.PlayedAt,
+                        ms.User!.Name,
+                        ms.User.ProfileImageUrl)).ToList());
 
                 var updatedDto = new ChatMemberUpdatedDto
                  (
@@ -253,8 +283,18 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                 await _messageNotifier.NotifyUpdatedMessageAsync(messageMapper);
                 // Notify chat members about the updated message
                 await _messageNotifier.NotifyChatMembersUpdatedAsync(chatMembersIds, updatedDto);
+                // If the receiver is online, mark the message as delivered
+                var MembersIds = await _chatMemberService.GetChatMembersIdsAsync(message.ChatId);
 
-                return Edit<string>(_stringLocalizer[SharedResourcesKeys.MessageUpdatedSuccessfully]);
+                foreach (var memberId in MembersIds)
+                {
+                    if (memberId == currentUserId) continue;
+
+                    if (_onlineUserService.IsUserOnline(memberId))
+                        await _messageNotifier.NotifyMarkAsDeliveredAsync(memberId, message.Id);
+                }
+
+                return Edit<string>(_stringLocalizer[SharedResourcesKeys.MessageUpdatedSuccessfully], messageMapper);
             }
             return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToUpdateMessage]);
         }

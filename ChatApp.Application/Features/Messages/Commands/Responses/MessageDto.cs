@@ -1,4 +1,5 @@
-﻿using ChatApp.Domain.Enums;
+﻿using ChatApp.Application.Features.MessageStatuses.Queries.Responses;
+using ChatApp.Domain.Enums;
 
 namespace ChatApp.Application.Features.Messages.Commands.Responses
 {
@@ -12,5 +13,6 @@ namespace ChatApp.Application.Features.Messages.Commands.Responses
         int? Duration,
         DateTimeOffset SentAt,
         bool IsEdited,
-        bool IsDeleted);
+        bool IsDeleted,
+        List<MessageStatusDto> MessageStatuses);
 }
