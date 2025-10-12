@@ -37,7 +37,7 @@ namespace ChatApp.Presentation.Helper
             var activeUserIds = await _chatMemberService.GetActiveUsersAsync(message.ChatId);
             var onlineUserIds = _onlineUserService.GetOnlineUsersAsync(activeUserIds);
 
-            await _hub.Clients.Users(onlineUserIds).SendAsync("ReceiveMessage", message);
+            await _hub.Clients.Clients(onlineUserIds).SendAsync("ReceiveMessage", message);
         }
 
         public async Task NotifyUpdatedMessageAsync(MessageDto message)
@@ -46,7 +46,7 @@ namespace ChatApp.Presentation.Helper
             var activeUserIds = await _chatMemberService.GetActiveUsersAsync(message.ChatId);
             var onlineUserIds = _onlineUserService.GetOnlineUsersAsync(activeUserIds);
 
-            await _hub.Clients.Users(onlineUserIds).SendAsync("UpdatedMessage", message);
+            await _hub.Clients.Clients(onlineUserIds).SendAsync("UpdatedMessage", message);
         }
 
         public async Task NotifyUnreadIncrementAsync(Guid chatId)
@@ -54,12 +54,12 @@ namespace ChatApp.Presentation.Helper
             var activeUserIds = await _chatMemberService.GetActiveUsersAsync(chatId);
             var onlineUserIds = _onlineUserService.GetOnlineUsersAsync(activeUserIds);
 
-            await _hub.Clients.Users(onlineUserIds).SendAsync("UnreadCountIncremented", chatId.ToString());
+            await _hub.Clients.Clients(onlineUserIds).SendAsync("UnreadCountIncremented", chatId.ToString());
         }
 
         public async Task NotifyChatMembersUpdatedAsync(List<string> onlineUserIds, ChatMemberUpdatedDto updatedDto)
         {
-            await _hub.Clients.Users(onlineUserIds).SendAsync("ChatMembersUpdated", updatedDto);
+            await _hub.Clients.Clients(onlineUserIds).SendAsync("ChatMembersUpdated", updatedDto);
         }
 
         public async Task NotifyDeletedMessageAsync(Guid chatId, Guid messageId)
@@ -67,7 +67,7 @@ namespace ChatApp.Presentation.Helper
             var activeUserIds = await _chatMemberService.GetActiveUsersAsync(chatId);
             var onlineUserIds = _onlineUserService.GetOnlineUsersAsync(activeUserIds);
 
-            await _hub.Clients.Users(onlineUserIds).SendAsync("MessageDeleted", messageId.ToString());
+            await _hub.Clients.Clients(onlineUserIds).SendAsync("MessageDeleted", messageId.ToString());
         }
 
         // Invoked when a user opens an application

@@ -75,8 +75,17 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                             CreatedAt = DateTimeOffset.UtcNow.ToLocalTime(),
                             ChatMembers = new List<ChatMember>
                             {
-                                new ChatMember { UserId = currentUserId, Role = Role.Member, JoinedAt = DateTimeOffset.UtcNow.ToLocalTime() },
-                                new ChatMember { UserId = (Guid)request.ReceiverId, Role = Role.Member, JoinedAt = DateTimeOffset.UtcNow.ToLocalTime() }
+                                new ChatMember {
+                                    UserId = currentUserId,
+                                    Role = Role.Member,
+                                    JoinedAt = DateTimeOffset.UtcNow.ToLocalTime(),
+                                    Status = MemberStatus.Active },
+
+                                new ChatMember {
+                                    UserId = (Guid)request.ReceiverId,
+                                    Role = Role.Member,
+                                    JoinedAt = DateTimeOffset.UtcNow.ToLocalTime(),
+                                    Status = MemberStatus.Active }
                             }
                         };
                         var result = await _chatService.CreateChatAsync(chat);

@@ -26,6 +26,7 @@
             public const string PinOrUnpin = Prefix + "pinOrUnpin/" + SingleRoute;
             public const string MakeAsAdminOrUnadmin = Prefix + "makeAsAdminOrUnadmin/" + SingleRoute;
             public const string RemoveMemberFromGroup = Prefix + "removeMemberFromGroup/" + SingleRoute;
+            public const string AddMembersToGroup = Prefix + "addMembersToGroup";
         }
 
         public static class Contact
@@ -50,6 +51,8 @@
             public const string Prefix = Rule + "chats/";
             public const string GetChatWithMessages = Prefix + "getChatWithMessages";
             public const string CreateGroup = Prefix + "createGroup";
+            public const string UpdateGroup = Prefix + "updateGroup";
+            public const string UpdateGroupImage = Prefix + "updateGroupImage";
         }
 
         public static class MessageStatus

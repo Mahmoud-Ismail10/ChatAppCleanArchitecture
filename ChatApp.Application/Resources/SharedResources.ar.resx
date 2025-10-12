@@ -414,4 +414,31 @@
   <data name="CannotChangeOwnerRole" xml:space="preserve">
     <value>لا يمكنك تغيير دور مالك المجموعة.</value>
   </data>
+  <data name="ChatId" xml:space="preserve">
+    <value>معرف الدردشة</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="GroupUpdatedSuccessfully" xml:space="preserve">
+    <value>تم تحديث المجموعة بنجاح.</value>
+  </data>
+  <data name="GroupImageUrl" xml:space="preserve">
+    <value>عنوان صورة المجموعة</value>
+  </data>
+  <data name="GroupImageUpdatedSuccessfully" xml:space="preserve">
+    <value>تم تحديث صورة المجموعة بنجاح.</value>
+  </data>
+  <data name="FailedToUpdateGroupImage" xml:space="preserve">
+    <value>فشل في تحديث صورة المجموعة.</value>
+  </data>
+  <data name="FailedToAddMembersToGroup" xml:space="preserve">
+    <value>فشل في إضافة الأعضاء إلى المجموعة.</value>
+  </data>
+  <data name="MembersAddedToGroupSuccessfully" xml:space="preserve">
+    <value>تم إضافة الأعضاء إلى المجموعة بنجاح.</value>
+  </data>
+  <data name="NoNewMembersToAdd" xml:space="preserve">
+    <value>لا يوجد أعضاء جدد لإضافتهم.</value>
+  </data>
 </root>

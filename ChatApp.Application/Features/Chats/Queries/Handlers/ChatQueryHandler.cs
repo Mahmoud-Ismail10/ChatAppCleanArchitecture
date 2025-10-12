@@ -64,11 +64,15 @@ namespace ChatApp.Application.Features.Chats.Queries.Handlers
 
             var messagesQuery = chat.Messages.AsQueryable();
 
+            // If the user has deleted the chat, show only messages sent after deletion
             if (chatMember.DeletedAt.HasValue)
                 messagesQuery = messagesQuery.Where(m => m.SentAt > chatMember.DeletedAt.Value);
-
-            if (chatMember.LeftAt.HasValue)
-                messagesQuery = messagesQuery.Where(m => m.SentAt <= chatMember.LeftAt.Value);
+            // If the user has left the chat, show only messages sent before leaving
+            else if (chatMember.LeftAt != default && chatMember.JoinedAt != default)
+            {
+                messagesQuery = messagesQuery.Where(m =>
+                    m.SentAt <= chatMember.LeftAt || m.SentAt >= chatMember.JoinedAt);
+            }
 
             var messages = messagesQuery
                 .OrderBy(m => m.SentAt)

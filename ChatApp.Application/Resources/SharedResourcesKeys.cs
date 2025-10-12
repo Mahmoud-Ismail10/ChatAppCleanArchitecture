@@ -101,6 +101,14 @@
         public const string MemberRemovedFromGroupSuccessfully = "MemberRemovedFromGroupSuccessfully";
         public const string CannotRemoveOwnerFromGroup = "CannotRemoveOwnerFromGroup";
         public const string CannotChangeOwnerRole = "CannotChangeOwnerRole";
+        public const string ChatId = "ChatId";
+        public const string Description = "Description";
+        public const string GroupUpdatedSuccessfully = "GroupUpdatedSuccessfully";
+        public const string FailedToUpdateGroupImage = "FailedToUpdateGroupImage";
+        public const string GroupImageUpdatedSuccessfully = "GroupImageUpdatedSuccessfully";
+        public const string FailedToAddMembersToGroup = "FailedToAddMembersToGroup";
+        public const string MembersAddedToGroupSuccessfully = "MembersAddedToGroupSuccessfully";
+        public const string NoNewMembersToAdd = "NoNewMembersToAdd";
 
     }
 }

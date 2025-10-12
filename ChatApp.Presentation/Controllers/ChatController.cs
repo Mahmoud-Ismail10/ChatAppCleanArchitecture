@@ -23,5 +23,19 @@ namespace ChatApp.Presentation.Controllers
             var result = await Mediator.Send(command);
             return NewResult(result);
         }
+
+        [HttpPut(Router.Chat.UpdateGroup)]
+        public async Task<IActionResult> UpdateGroup([FromBody] UpdateGroupCommand command)
+        {
+            var result = await Mediator.Send(command);
+            return NewResult(result);
+        }
+
+        [HttpPut(Router.Chat.UpdateGroupImage)]
+        public async Task<IActionResult> UpdateGroupImage([FromForm] UpdateGroupImageCommand command)
+        {
+            var result = await Mediator.Send(command);
+            return NewResult(result);
+        }
     }
 }
