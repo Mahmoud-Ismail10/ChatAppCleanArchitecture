@@ -2,7 +2,7 @@
 {
     public interface IOnlineUserService
     {
-        List<string> GetUserConnections(Guid userId);
+        List<string> GetOnlineUsersAsync(List<Guid> ActiveUserIds);
         bool IsUserOnline(Guid userId);
         void UserConnected(Guid userId, string connectionId);
         void UserDisconnected(Guid userId, string connectionId);

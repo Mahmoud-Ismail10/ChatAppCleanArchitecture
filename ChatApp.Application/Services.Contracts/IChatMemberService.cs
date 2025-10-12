@@ -5,7 +5,7 @@ namespace ChatApp.Application.Services.Contracts
 {
     public interface IChatMemberService
     {
-        Task<string> AddChatMemberAsync(ChatMember chatMember);
+        Task<List<Guid>> GetActiveUsersAsync(Guid ChatId);
         Task<IReadOnlyList<GetAllChatsMemberResponse>> GetAllChatsMemberAsync(Guid userId);
         Task<ChatMember?> GetAnotherUserInSameChatAsync(Guid currentUserId, Guid chatId);
         Task<ChatMember?> GetChatMemberByIdAsync(Guid chatMemberId);
@@ -16,8 +16,8 @@ namespace ChatApp.Application.Services.Contracts
         Task<string> MakeAsAdminOrUnadminAsync(ChatMember chatMember);
         Task<List<MessageStatus?>> MarkAsReadAsync(Guid chatMemberId);
         Task<string> PinOrUnpinChatAsync(Guid chatMemberId);
+        Task<string> RemoveMemberFromGroupAsync(ChatMember chatMember);
         Task<string> RestoreDeletedChatMembersAsync(ChatMember? chatMember);
         Task<string> SoftDeleteChatMemberAsync(ChatMember chatMember);
-        Task<string> UpdateChatMemberAsync(ChatMember chatMember);
     }
 }

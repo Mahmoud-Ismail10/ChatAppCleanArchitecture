@@ -402,4 +402,16 @@
   <data name="FailedToChangeMemberRole" xml:space="preserve">
     <value>فشل في تغيير دور العضو.</value>
   </data>
+  <data name="CannotRemoveOwnerFromGroup" xml:space="preserve">
+    <value>لا يمكنك إزالة مالك المجموعة.</value>
+  </data>
+  <data name="MemberRemovedFromGroupSuccessfully" xml:space="preserve">
+    <value>تم إزالة العضو من المجموعة بنجاح.</value>
+  </data>
+  <data name="FailedToRemoveMemberFromGroup" xml:space="preserve">
+    <value>فشل في إزالة العضو من المجموعة.</value>
+  </data>
+  <data name="CannotChangeOwnerRole" xml:space="preserve">
+    <value>لا يمكنك تغيير دور مالك المجموعة.</value>
+  </data>
 </root>

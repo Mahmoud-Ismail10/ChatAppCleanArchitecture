@@ -10,16 +10,22 @@ namespace ChatApp.Presentation.Helper
         #region Fields
         private readonly IHubContext<ChatHub> _hub;
         private readonly IMessageStatusService _messageStatusService;
+        private readonly IChatMemberService _chatMemberService;
+        private readonly IOnlineUserService _onlineUserService;
         private readonly IMessageService _messageService;
         #endregion
 
         #region Constructors
         public MessageNotifier(IHubContext<ChatHub> hub,
             IMessageStatusService messageStatusService,
+            IChatMemberService chatMemberService,
+            IOnlineUserService onlineUserService,
             IMessageService messageService)
         {
             _hub = hub;
             _messageStatusService = messageStatusService;
+            _chatMemberService = chatMemberService;
+            _onlineUserService = onlineUserService;
             _messageService = messageService;
         }
         #endregion
@@ -27,29 +33,41 @@ namespace ChatApp.Presentation.Helper
         #region Functions
         public async Task NotifyMessageAsync(MessageDto message)
         {
-            await _hub.Clients.Group(message.ChatId.ToString()).SendAsync("ReceiveMessage", message);
+            // Get active users in the chat
+            var activeUserIds = await _chatMemberService.GetActiveUsersAsync(message.ChatId);
+            var onlineUserIds = _onlineUserService.GetOnlineUsersAsync(activeUserIds);
+
+            await _hub.Clients.Users(onlineUserIds).SendAsync("ReceiveMessage", message);
         }
 
         public async Task NotifyUpdatedMessageAsync(MessageDto message)
         {
-            await _hub.Clients.Group(message.ChatId.ToString()).SendAsync("UpdatedMessage", message);
+            // Get active users in the chat
+            var activeUserIds = await _chatMemberService.GetActiveUsersAsync(message.ChatId);
+            var onlineUserIds = _onlineUserService.GetOnlineUsersAsync(activeUserIds);
+
+            await _hub.Clients.Users(onlineUserIds).SendAsync("UpdatedMessage", message);
         }
 
         public async Task NotifyUnreadIncrementAsync(Guid chatId)
         {
-            await _hub.Clients.Group(chatId.ToString())
-                .SendAsync("UnreadCountIncremented", chatId.ToString());
+            var activeUserIds = await _chatMemberService.GetActiveUsersAsync(chatId);
+            var onlineUserIds = _onlineUserService.GetOnlineUsersAsync(activeUserIds);
+
+            await _hub.Clients.Users(onlineUserIds).SendAsync("UnreadCountIncremented", chatId.ToString());
         }
 
-        public async Task NotifyChatMembersUpdatedAsync(List<string> chatMembersIds, ChatMemberUpdatedDto updatedDto)
+        public async Task NotifyChatMembersUpdatedAsync(List<string> onlineUserIds, ChatMemberUpdatedDto updatedDto)
         {
-            await _hub.Clients.Users(chatMembersIds).SendAsync("ChatMembersUpdated", updatedDto);
+            await _hub.Clients.Users(onlineUserIds).SendAsync("ChatMembersUpdated", updatedDto);
         }
 
         public async Task NotifyDeletedMessageAsync(Guid chatId, Guid messageId)
         {
-            await _hub.Clients.Group(chatId.ToString())
-                .SendAsync("MessageDeleted", messageId.ToString());
+            var activeUserIds = await _chatMemberService.GetActiveUsersAsync(chatId);
+            var onlineUserIds = _onlineUserService.GetOnlineUsersAsync(activeUserIds);
+
+            await _hub.Clients.Users(onlineUserIds).SendAsync("MessageDeleted", messageId.ToString());
         }
 
         // Invoked when a user opens an application

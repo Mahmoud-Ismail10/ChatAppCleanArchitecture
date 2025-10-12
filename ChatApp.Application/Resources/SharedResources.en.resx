@@ -402,4 +402,16 @@
   <data name="FailedToChangeMemberRole" xml:space="preserve">
     <value>Failed to change member role.</value>
   </data>
+  <data name="CannotRemoveOwnerFromGroup" xml:space="preserve">
+    <value>You cannot remove the group owner.</value>
+  </data>
+  <data name="MemberRemovedFromGroupSuccessfully" xml:space="preserve">
+    <value>Member removed from group successfully.</value>
+  </data>
+  <data name="FailedToRemoveMemberFromGroup" xml:space="preserve">
+    <value>Failed to remove member from group.</value>
+  </data>
+  <data name="CannotChangeOwnerRole" xml:space="preserve">
+    <value>You cannot change the owner’s role.</value>
+  </data>
 </root>

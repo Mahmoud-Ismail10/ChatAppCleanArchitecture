@@ -97,6 +97,10 @@
         public const string NotAllowedToChangeRole = "NotAllowedToChangeRole";
         public const string FailedToChangeMemberRole = "FailedToChangeMemberRole";
         public const string MemberRoleChangedSuccessfully = "MemberRoleChangedSuccessfully";
+        public const string FailedToRemoveMemberFromGroup = "FailedToRemoveMemberFromGroup";
+        public const string MemberRemovedFromGroupSuccessfully = "MemberRemovedFromGroupSuccessfully";
+        public const string CannotRemoveOwnerFromGroup = "CannotRemoveOwnerFromGroup";
+        public const string CannotChangeOwnerRole = "CannotChangeOwnerRole";
 
     }
 }

@@ -66,6 +66,9 @@ namespace ChatApp.Application.Features.Chats.Queries.Handlers
             if (chatMember.DeletedAt.HasValue)
                 messagesQuery = messagesQuery.Where(m => m.SentAt > chatMember.DeletedAt.Value);
 
+            if (chatMember.LeftAt.HasValue)
+                messagesQuery = messagesQuery.Where(m => m.SentAt <= chatMember.LeftAt.Value);
+
             var messages = messagesQuery
                 .OrderBy(m => m.SentAt)
                 .Select(m => new MessageReceivedDto(

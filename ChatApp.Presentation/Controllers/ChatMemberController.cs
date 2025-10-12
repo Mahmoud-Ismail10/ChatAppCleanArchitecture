@@ -37,6 +37,13 @@ namespace ChatApp.Presentation.Controllers
             var result = await Mediator.Send(new MakeAsAdminOrUnadminCommand(id));
             return NewResult(result);
         }
+
+        [HttpPut(Router.ChatMember.RemoveMemberFromGroup)]
+        public async Task<IActionResult> RemoveMemberFromGroup([FromRoute] Guid id)
+        {
+            var result = await Mediator.Send(new RemoveMemberFromGroupCommand(id));
+            return NewResult(result);
+        }
     }
 }
 

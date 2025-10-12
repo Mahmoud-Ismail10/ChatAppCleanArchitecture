@@ -31,14 +31,14 @@ namespace ChatApp.Infrastructure.Services
         public async Task<List<MessageStatus>> CreateMessageStatusesAsync(Guid chatId, Guid currentUserId, Guid messageId)
         {
             return await _chatMemberRepository.GetTableNoTracking()
-                .Include(cm => cm.User)
-                .Where(cm => cm.ChatId == chatId && cm.UserId != currentUserId)
+                .Where(cm => cm.ChatId == chatId &&
+                        cm.UserId != currentUserId &&
+                        cm.Status == MemberStatus.Active)
                 .Select(m => new MessageStatus
                 {
                     Id = Guid.NewGuid(),
                     MessageId = messageId,
                     UserId = m.UserId,
-                    User = m.User,
                     Status = MessageState.Sent
                 }).ToListAsync();
         }

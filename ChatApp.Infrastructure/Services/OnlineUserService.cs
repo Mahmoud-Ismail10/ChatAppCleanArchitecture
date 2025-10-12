@@ -49,10 +49,11 @@ namespace ChatApp.Infrastructure.Services
             return onlineUsers!.ContainsKey(userId);
         }
 
-        public List<string> GetUserConnections(Guid userId)
+        public List<string> GetOnlineUsersAsync(List<Guid> ActiveUserIds)
         {
             var onlineUsers = GetOnlineUsers();
-            return onlineUsers!.ContainsKey(userId) ? onlineUsers[userId] : new List<string>();
+            return onlineUsers!.Where(u => ActiveUserIds.Contains(u.Key))
+                .SelectMany(u => u.Value).ToList();
         }
     }
 }

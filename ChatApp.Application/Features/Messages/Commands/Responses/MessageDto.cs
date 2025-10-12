@@ -14,5 +14,5 @@ namespace ChatApp.Application.Features.Messages.Commands.Responses
         DateTimeOffset SentAt,
         bool IsEdited,
         bool IsDeleted,
-        List<MessageStatusDto> MessageStatuses);
+        List<MessageStatusMiniDto> MessageStatuses);
 }

@@ -2,6 +2,7 @@
 using ChatApp.Application.Features.ChatsMember.Commands.Models;
 using ChatApp.Application.Resources;
 using ChatApp.Application.Services.Contracts;
+using ChatApp.Domain.Enums;
 using MediatR;
 using Microsoft.Extensions.Localization;
 
@@ -10,7 +11,8 @@ namespace ChatApp.Application.Features.ChatsMember.Commands.Handlers
     public class ChatMemberCommandHandler : ApiResponseHandler,
         IRequestHandler<DeleteChatForMeCommand, ApiResponse<string>>,
         IRequestHandler<PinOrUnpinChatCommand, ApiResponse<string>>,
-        IRequestHandler<MakeAsAdminOrUnadminCommand, ApiResponse<string>>
+        IRequestHandler<MakeAsAdminOrUnadminCommand, ApiResponse<string>>,
+        IRequestHandler<RemoveMemberFromGroupCommand, ApiResponse<string>>
     {
         #region Fields
         private readonly IChatService _chatService;
@@ -82,13 +84,36 @@ namespace ChatApp.Application.Features.ChatsMember.Commands.Handlers
             if (chatMember == null) return NotFound<string>(_stringLocalizer[SharedResourcesKeys.MemberNotFound]);
 
             var IsMemberOfChat = await _chatMemberService.IsMemberOfChatAsync(currentUserId, chatMember.ChatId);
-            if (!IsMemberOfChat) return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.AccessDenied]);
-
             var IsOwnerOrAdmin = await _chatMemberService.IsOwnerOrAdminAsync(currentUserId, chatMember.ChatId);
+            if (!IsMemberOfChat || !IsMemberOfChat) return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.AccessDenied]);
+
+            if (chatMember.Role == Role.Owner)
+                return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.CannotChangeOwnerRole]);
+
+
             var response = await _chatMemberService.MakeAsAdminOrUnadminAsync(chatMember);
             if (response == "Success")
                 return Success<string>(_stringLocalizer[SharedResourcesKeys.MemberRoleChangedSuccessfully]);
             return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToChangeMemberRole]);
+        }
+
+        public async Task<ApiResponse<string>> Handle(RemoveMemberFromGroupCommand request, CancellationToken cancellationToken)
+        {
+            var currentUserId = _currentUserService.GetUserId();
+            var chatMember = await _chatMemberService.GetChatMemberByIdAsync(request.ChatMemberId);
+            if (chatMember == null) return NotFound<string>(_stringLocalizer[SharedResourcesKeys.MemberNotFound]);
+
+            var IsMemberOfChat = await _chatMemberService.IsMemberOfChatAsync(currentUserId, chatMember.ChatId);
+            var IsOwnerOrAdmin = await _chatMemberService.IsOwnerOrAdminAsync(currentUserId, chatMember.ChatId);
+            if (!IsOwnerOrAdmin || !IsMemberOfChat) return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.AccessDenied]);
+
+            if (chatMember.Role == Role.Owner)
+                return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.CannotRemoveOwnerFromGroup]);
+
+            var response = await _chatMemberService.RemoveMemberFromGroupAsync(chatMember);
+            if (response == "Success")
+                return Success<string>(_stringLocalizer[SharedResourcesKeys.MemberRemovedFromGroupSuccessfully]);
+            return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToRemoveMemberFromGroup]);
         }
         #endregion
     }

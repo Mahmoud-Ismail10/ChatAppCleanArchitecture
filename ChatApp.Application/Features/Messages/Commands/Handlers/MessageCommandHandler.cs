@@ -130,43 +130,14 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                 var messageStatuses = await _messageStatusService.CreateMessageStatusesAsync(chat.Id, currentUserId, message.Id);
                 message.MessageStatuses = messageStatuses;
 
-                var messageMapper = new MessageDto
-                (
-                    message.Id.ToString(),
-                    message.ChatId,
-                    message.SenderId,
-                    message.Type,
-                    message.Content,
-                    message.FilePath,
-                    message.Duration,
-                    message.SentAt,
-                    message.IsEdited,
-                    message.IsDeleted,
-                    message.MessageStatuses.Select(ms => new MessageStatusDto(
-                        ms.UserId,
-                        ms.Status,
-                        ms.DeliveredAt,
-                        ms.ReadAt,
-                        ms.PlayedAt,
-                        ms.User!.Name,
-                        ms.User.ProfileImageUrl)).ToList()
-                );
-
-                var chatMembersIds = chat.ChatMembers.Select(cm => cm.UserId.ToString()).ToList();
+                var activeUserIds = await _chatMemberService.GetActiveUsersAsync(message.ChatId);
+                var onlineUserIds = _onlineUserService.GetOnlineUsersAsync(activeUserIds);
 
                 var result3 = await _messageService.AddMessageAsync(message);
                 if (result3 == "Success")
                 {
                     chat.LastMessage = message;
                     chat.LastMessageId = message.Id;
-
-                    var updatedDto = new ChatMemberUpdatedDto
-                    (
-                        chat.Id.ToString(),
-                        chat.LastMessage!.Content!,
-                        chat.LastMessage.SentAt,
-                        chat.LastMessage.Type
-                    );
 
                     var result2 = await _chatService.UpdateChatAsync(chat);
                     if (result2 != "Success")
@@ -175,12 +146,37 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                         return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToUpdateChat]);
                     }
 
+                    var updatedDto = new ChatMemberUpdatedDto
+                    (
+                        chat.Id.ToString(),
+                        message.Content!,
+                        message.SentAt,
+                        message.Type
+                    );
+
+                    var messageMapper = new MessageDto
+                    (
+                        message.Id.ToString(),
+                        message.ChatId,
+                        message.SenderId,
+                        message.Type,
+                        message.Content,
+                        message.FilePath,
+                        message.Duration,
+                        message.SentAt,
+                        message.IsEdited,
+                        message.IsDeleted,
+                        message.MessageStatuses.Select(ms => new MessageStatusMiniDto(
+                            ms.UserId,
+                            ms.Status)).ToList()
+                    );
+
                     // Broadcast the message to the receiver using SignalR
                     await _messageNotifier.NotifyMessageAsync(messageMapper);
                     // Increment unread message count for the receiver
                     await _messageNotifier.NotifyUnreadIncrementAsync(chat.Id);
                     // Notify chat members about the new message
-                    await _messageNotifier.NotifyChatMembersUpdatedAsync(chatMembersIds, updatedDto);
+                    await _messageNotifier.NotifyChatMembersUpdatedAsync(onlineUserIds, updatedDto);
                     // If the receiver is online, mark the message as delivered
                     var MembersIds = await _chatMemberService.GetChatMembersIdsAsync(message.ChatId);
 
@@ -261,14 +257,10 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                     message.SentAt,
                     message.IsEdited,
                     message.IsDeleted,
-                    message.MessageStatuses.Select(ms => new MessageStatusDto(
+                    message.MessageStatuses.Select(ms => new MessageStatusMiniDto(
                         ms.UserId,
-                        ms.Status,
-                        ms.DeliveredAt,
-                        ms.ReadAt,
-                        ms.PlayedAt,
-                        ms.User!.Name,
-                        ms.User.ProfileImageUrl)).ToList());
+                        ms.Status)).ToList()
+                );
 
                 var updatedDto = new ChatMemberUpdatedDto
                  (

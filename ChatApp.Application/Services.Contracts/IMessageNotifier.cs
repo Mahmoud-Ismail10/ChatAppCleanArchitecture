@@ -4,7 +4,7 @@ namespace ChatApp.Application.Services.Contracts
 {
     public interface IMessageNotifier
     {
-        Task NotifyChatMembersUpdatedAsync(List<string> chatMembersIds, ChatMemberUpdatedDto updatedDto);
+        Task NotifyChatMembersUpdatedAsync(List<string> onlineUserIds, ChatMemberUpdatedDto updatedDto);
         Task NotifyDeletedMessageAsync(Guid chatId, Guid messageId);
         Task NotifyMarkAsDeliveredAsync(Guid receiveUserId, Guid messageId);
         Task NotifyMarkAsReadAsync(Guid receiveUserId, Guid messageId);

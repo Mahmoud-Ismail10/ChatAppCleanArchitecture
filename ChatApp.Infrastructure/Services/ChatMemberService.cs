@@ -15,19 +15,16 @@ namespace ChatApp.Infrastructure.Services
         #region Fields
         private readonly IChatMemberRepository _chatMemberRepository;
         private readonly IMessageStatusRepository _messageStatusRepository;
-        private readonly IMessageNotifier _messageNotifier;
         private readonly IStringLocalizer<SharedResources> _stringLocalizer;
         #endregion
 
         #region Constructors
         public ChatMemberService(IChatMemberRepository chatMemberRepository,
             IMessageStatusRepository messageStatusRepository,
-            IMessageNotifier messageNotifier,
             IStringLocalizer<SharedResources> stringLocalizer)
         {
             _chatMemberRepository = chatMemberRepository;
             _messageStatusRepository = messageStatusRepository;
-            _messageNotifier = messageNotifier;
             _stringLocalizer = stringLocalizer;
         }
         #endregion
@@ -37,76 +34,63 @@ namespace ChatApp.Infrastructure.Services
         {
             return await _chatMemberRepository.GetTableNoTracking()
              .Where(cm => cm.UserId == userId && !cm.IsDeleted)
-             .Select(cm => new GetAllChatsMemberResponse
+             .Select(cm => new
+             {
+                 ChatMember = cm,
+                 LastMessage = cm.Chat!.Messages
+                .Where(m => !cm.LeftAt.HasValue || m.SentAt <= cm.LeftAt.Value)
+                .OrderByDescending(m => m.SentAt)
+                .Select(m => new
+                {
+                    m.Type,
+                    m.Content,
+                    m.SentAt
+                })
+                .FirstOrDefault()
+             })
+             .Select(x => new GetAllChatsMemberResponse
              (
-                 cm.Chat!.IsGroup
+                 x.ChatMember.Chat!.IsGroup
                      ? null
-                     : cm.Chat.ChatMembers
+                     : x.ChatMember.Chat.ChatMembers
                          .Where(m => m.UserId != userId)
                          .Select(m => m.Id)
                          .FirstOrDefault(), // ChatMemberId of the other member in case of one-to-one chat
 
-                 cm.Chat.IsGroup
+                 x.ChatMember.Chat.IsGroup
                      ? null
-                     : cm.Chat.ChatMembers
+                     : x.ChatMember.Chat.ChatMembers
                          .Where(m => m.UserId != userId)
                          .Select(m => m.UserId)
                          .FirstOrDefault(), // UserId of the other member in case of one-to-one chat
 
-                 cm.Id, // ChatMemberId
-                 cm.Chat!.Id, // ChatId
-                 cm.Chat.IsGroup, // IsGroup
-                 cm.IsPinned, // IsPinned
+                 x.ChatMember.Id, // ChatMemberId
+                 x.ChatMember.Chat!.Id, // ChatId
+                 x.ChatMember.Chat.IsGroup, // IsGroup
+                 x.ChatMember.IsPinned, // IsPinned
                  false, // IsOnline (This will be set in the handler) 
 
-                 cm.Chat.IsGroup
-                     ? cm.Chat.Name
-                     : cm.Chat.ChatMembers
+                 x.ChatMember.Chat.IsGroup
+                     ? x.ChatMember.Chat.Name
+                     : x.ChatMember.Chat.ChatMembers
                          .Where(m => m.UserId != userId)
                          .Select(m => m.User!.Name)
                          .FirstOrDefault(), // ChatName
 
-                 cm.Chat.IsGroup
-                     ? cm.Chat.GroupImageUrl
-                     : cm.Chat.ChatMembers
+                 x.ChatMember.Chat.IsGroup
+                     ? x.ChatMember.Chat.GroupImageUrl
+                     : x.ChatMember.Chat.ChatMembers
                          .Where(m => m.UserId != userId)
                          .Select(m => m.User!.ProfileImageUrl)
                          .FirstOrDefault(), // ChatImageUrl
 
-                 cm.Chat.LastMessage!.Type, // LastMessageType
-                 cm.Chat.LastMessage.Content, // LastMessageContent
-                 cm.Chat.LastMessage.SentAt, // LastMessageSentAt
-                 cm.Chat.Messages.Count(m =>
-                     cm.LastReadMessageAt == null || m.SentAt > cm.LastReadMessageAt.Value) // UnreadMessagesCount
+                 x.LastMessage != null ? x.LastMessage.Type : MessageType.Unknown, // LastMessageType
+                 x.LastMessage != null ? x.LastMessage.Content : null, // LastMessageContent
+                 x.LastMessage != null ? x.LastMessage.SentAt : null, // LastMessageSentAt
+
+                 x.ChatMember.Chat.Messages.Count(m =>
+                     x.ChatMember.LastReadMessageAt == null || m.SentAt > x.ChatMember.LastReadMessageAt.Value) // UnreadMessagesCount
              )).ToListAsync();
-        }
-
-        public async Task<string> AddChatMemberAsync(ChatMember chatMember)
-        {
-            try
-            {
-                await _chatMemberRepository.AddAsync(chatMember);
-                return "Success";
-            }
-            catch (Exception ex)
-            {
-                Log.Error("Error in creating new chat member: {Message}", ex.InnerException?.Message ?? ex.Message);
-                return "Failed";
-            }
-        }
-
-        public async Task<string> UpdateChatMemberAsync(ChatMember chatMember)
-        {
-            try
-            {
-                await _chatMemberRepository.UpdateAsync(chatMember);
-                return "Success";
-            }
-            catch (Exception ex)
-            {
-                Log.Error("Error in updating chat member: {Message}", ex.InnerException?.Message ?? ex.Message);
-                return "Failed";
-            }
         }
 
         public async Task<string> RestoreDeletedChatMembersAsync(ChatMember? chatMember)
@@ -239,7 +223,10 @@ namespace ChatApp.Infrastructure.Services
         public async Task<bool> IsMemberOfChatAsync(Guid userId, Guid chatId)
         {
             return await _chatMemberRepository.GetTableNoTracking()
-                                              .AnyAsync(cm => cm.UserId == userId && cm.ChatId == chatId && !cm.IsDeleted);
+                                              .AnyAsync(cm => cm.UserId == userId &&
+                                                              cm.ChatId == chatId &&
+                                                              cm.Status == MemberStatus.Active &&
+                                                              !cm.IsDeleted);
         }
 
         public async Task<string> MakeAsAdminOrUnadminAsync(ChatMember chatMember)
@@ -267,6 +254,30 @@ namespace ChatApp.Infrastructure.Services
                                               .FirstOrDefaultAsync(cm => cm.UserId == userId && cm.ChatId == chatId && !cm.IsDeleted);
             if (chatMember == null) return false;
             return chatMember.Role == Role.Owner || chatMember.Role == Role.Admin;
+        }
+
+        public async Task<string> RemoveMemberFromGroupAsync(ChatMember chatMember)
+        {
+            try
+            {
+                chatMember.Status = MemberStatus.Removed;
+                chatMember.LeftAt = DateTimeOffset.UtcNow.ToLocalTime();
+                await _chatMemberRepository.UpdateAsync(chatMember);
+                return "Success";
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error in removing member from group: {Message}", ex.InnerException?.Message ?? ex.Message);
+                return "Failed";
+            }
+        }
+
+        public async Task<List<Guid>> GetActiveUsersAsync(Guid ChatId)
+        {
+            return await _chatMemberRepository.GetTableNoTracking()
+                                              .Where(cm => cm.ChatId == ChatId && cm.Status == MemberStatus.Active && !cm.IsDeleted)
+                                              .Select(cm => cm.UserId)
+                                              .ToListAsync();
         }
         #endregion
     }
