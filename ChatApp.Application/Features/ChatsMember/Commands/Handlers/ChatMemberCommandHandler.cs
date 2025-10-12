@@ -14,7 +14,8 @@ namespace ChatApp.Application.Features.ChatsMember.Commands.Handlers
         IRequestHandler<PinOrUnpinChatCommand, ApiResponse<string>>,
         IRequestHandler<MakeAsAdminOrUnadminCommand, ApiResponse<string>>,
         IRequestHandler<RemoveMemberFromGroupCommand, ApiResponse<string>>,
-        IRequestHandler<AddMembersToGroupCommand, ApiResponse<string>>
+        IRequestHandler<AddMembersToGroupCommand, ApiResponse<string>>,
+        IRequestHandler<LeftGroupCommand, ApiResponse<string>>
     {
         #region Fields
         private readonly IChatService _chatService;
@@ -160,6 +161,21 @@ namespace ChatApp.Application.Features.ChatsMember.Commands.Handlers
             if (response == "Success")
                 return Success<string>(_stringLocalizer[SharedResourcesKeys.MembersAddedToGroupSuccessfully]);
             return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToAddMembersToGroup]);
+        }
+
+        public async Task<ApiResponse<string>> Handle(LeftGroupCommand request, CancellationToken cancellationToken)
+        {
+            var currentUserId = _currentUserService.GetUserId();
+            var chatMember = await _chatMemberService.GetChatMemberByIdAsync(request.ChatMemberId);
+            if (chatMember == null) return NotFound<string>(_stringLocalizer[SharedResourcesKeys.ChatNotFound]);
+
+            if (chatMember.Status != MemberStatus.Active)
+                return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.AccessDenied]);
+
+            var result = await _chatMemberService.LeftFromGroupAsync(chatMember);
+            if (result != "Success")
+                return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToLeftGroup]);
+            return Success<string>(_stringLocalizer[SharedResourcesKeys.LeftGroupSuccessfully]);
         }
         #endregion
     }

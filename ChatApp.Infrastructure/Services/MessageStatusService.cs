@@ -51,7 +51,7 @@ namespace ChatApp.Infrastructure.Services
 
             try
             {
-                if (status != null && status.Status < MessageState.Delivered)
+                if (status != null && status.Status != MessageState.Delivered)
                 {
                     status.Status = MessageState.Delivered;
                     status.DeliveredAt = DateTimeOffset.UtcNow.ToLocalTime();
@@ -83,10 +83,20 @@ namespace ChatApp.Infrastructure.Services
 
             try
             {
-                if (status != null && status.Status < MessageState.Read)
+                if (status != null && status.Status != MessageState.Read)
                 {
                     status.Status = MessageState.Read;
                     status.ReadAt = DateTimeOffset.UtcNow.ToLocalTime();
+
+                    var chatMember = await _chatMemberRepository.GetTableAsTracking()
+                                        .FirstOrDefaultAsync(cm => cm.ChatId == status.Message!.ChatId && cm.UserId == userId);
+
+                    if (chatMember != null)
+                    {
+                        chatMember.LastReadMessageAt = status.Message!.SentAt;
+                        await _chatMemberRepository.UpdateAsync(chatMember);
+                    }
+
                     await _messageStatusRepository.UpdateAsync(status);
                 }
             }
@@ -115,7 +125,7 @@ namespace ChatApp.Infrastructure.Services
 
             try
             {
-                if (status != null && status.Status < MessageState.Played)
+                if (status != null && status.Status != MessageState.Played)
                 {
                     status.Status = MessageState.Played;
                     status.PlayedAt = DateTimeOffset.UtcNow.ToLocalTime();

@@ -441,4 +441,10 @@
   <data name="NoNewMembersToAdd" xml:space="preserve">
     <value>لا يوجد أعضاء جدد لإضافتهم.</value>
   </data>
+  <data name="FailedToLeftGroup" xml:space="preserve">
+    <value>فشل في مغادرة المجموعة.</value>
+  </data>
+  <data name="LeftGroupSuccessfully" xml:space="preserve">
+    <value>تم مغادرة المجموعة بنجاح.</value>
+  </data>
 </root>

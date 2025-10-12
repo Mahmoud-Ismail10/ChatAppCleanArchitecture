@@ -161,6 +161,7 @@ namespace ChatApp.Infrastructure.Services
                 if (unreadStatuses.Any())
                     await _messageStatusRepository.UpdateRangeAsync(unreadStatuses);
 
+                chatMember.LastReadMessageAt = DateTimeOffset.UtcNow.ToLocalTime();
                 await _chatMemberRepository.UpdateAsync(chatMember);
 
                 return unreadStatuses!;
@@ -199,6 +200,22 @@ namespace ChatApp.Infrastructure.Services
             catch (Exception ex)
             {
                 Log.Error("Error in soft deleting chat member: {Message}", ex.InnerException?.Message ?? ex.Message);
+                return "Failed";
+            }
+        }
+
+        public async Task<string> LeftFromGroupAsync(ChatMember chatMember)
+        {
+            try
+            {
+                chatMember.Status = MemberStatus.Left;
+                chatMember.LeftAt = DateTimeOffset.UtcNow.ToLocalTime();
+                await _chatMemberRepository.UpdateAsync(chatMember);
+                return "Success";
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error in leaving from group: {Message}", ex.InnerException?.Message ?? ex.Message);
                 return "Failed";
             }
         }

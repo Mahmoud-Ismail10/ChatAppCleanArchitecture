@@ -13,6 +13,7 @@ namespace ChatApp.Application.Services.Contracts
         Task<bool> IsDeletedFromAllMembersAsync(Guid chatId);
         Task<bool> IsMemberOfChatAsync(Guid userId, Guid chatId);
         Task<bool> IsOwnerOrAdminAsync(Guid userId, Guid chatId);
+        Task<string> LeftFromGroupAsync(ChatMember chatMember);
         Task<string> MakeAsAdminOrUnadminAsync(ChatMember chatMember);
         Task<List<MessageStatus?>> MarkAsReadAsync(Guid chatMemberId);
         Task<string> PinOrUnpinChatAsync(Guid chatMemberId);

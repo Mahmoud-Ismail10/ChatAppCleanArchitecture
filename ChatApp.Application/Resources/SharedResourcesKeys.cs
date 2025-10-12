@@ -109,6 +109,8 @@
         public const string FailedToAddMembersToGroup = "FailedToAddMembersToGroup";
         public const string MembersAddedToGroupSuccessfully = "MembersAddedToGroupSuccessfully";
         public const string NoNewMembersToAdd = "NoNewMembersToAdd";
+        public const string LeftGroupSuccessfully = "LeftGroupSuccessfully";
+        public const string FailedToLeftGroup = "FailedToLeftGroup";
 
     }
 }

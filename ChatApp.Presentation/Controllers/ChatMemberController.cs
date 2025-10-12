@@ -51,6 +51,13 @@ namespace ChatApp.Presentation.Controllers
             var result = await Mediator.Send(command);
             return NewResult(result);
         }
+
+        [HttpPut(Router.ChatMember.LeftGroup)]
+        public async Task<IActionResult> LeftGroup([FromRoute] Guid id)
+        {
+            var result = await Mediator.Send(new LeftGroupCommand(id));
+            return NewResult(result);
+        }
     }
 }
 
