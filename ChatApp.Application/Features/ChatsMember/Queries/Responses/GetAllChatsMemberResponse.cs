@@ -15,5 +15,6 @@ namespace ChatApp.Application.Features.ChatsMember.Queries.Responses
         MessageType? LastMessageType,
         string? LastMessageContent,
         DateTimeOffset? LastMessageSentAt,
+        MessageState? LastMessageState,
         int UnreadCount);
 }

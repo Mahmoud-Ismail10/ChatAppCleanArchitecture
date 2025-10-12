@@ -154,6 +154,21 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
                         message.Type
                     );
 
+                    // Increment unread message count for the receiver
+                    await _messageNotifier.NotifyUnreadIncrementAsync(chat.Id);
+                    // Notify chat members about the new message
+                    await _messageNotifier.NotifyChatMembersUpdatedAsync(onlineUserIds, updatedDto);
+                    // If the receiver is online, mark the message as delivered
+                    var MembersIds = await _chatMemberService.GetChatMembersIdsAsync(message.ChatId);
+
+                    foreach (var memberId in MembersIds)
+                    {
+                        if (memberId == currentUserId) continue;
+
+                        if (_onlineUserService.IsUserOnline(memberId))
+                            await _messageNotifier.NotifyMarkAsDeliveredAsync(memberId, message.Id);
+                    }
+
                     var messageMapper = new MessageDto
                     (
                         message.Id.ToString(),
@@ -173,20 +188,6 @@ namespace ChatApp.Application.Features.Messages.Commands.Handlers
 
                     // Broadcast the message to the receiver using SignalR
                     await _messageNotifier.NotifyMessageAsync(messageMapper);
-                    // Increment unread message count for the receiver
-                    await _messageNotifier.NotifyUnreadIncrementAsync(chat.Id);
-                    // Notify chat members about the new message
-                    await _messageNotifier.NotifyChatMembersUpdatedAsync(onlineUserIds, updatedDto);
-                    // If the receiver is online, mark the message as delivered
-                    var MembersIds = await _chatMemberService.GetChatMembersIdsAsync(message.ChatId);
-
-                    foreach (var memberId in MembersIds)
-                    {
-                        if (memberId == currentUserId) continue;
-
-                        if (_onlineUserService.IsUserOnline(memberId))
-                            await _messageNotifier.NotifyMarkAsDeliveredAsync(memberId, message.Id);
-                    }
 
                     await _transactionService.CommitAsync();
                     return Success<string>(_stringLocalizer[SharedResourcesKeys.MessageSentSuccessfully], messageMapper);

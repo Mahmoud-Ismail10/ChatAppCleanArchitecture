@@ -1,4 +1,5 @@
-﻿using ChatApp.Domain.Enums;
+﻿using ChatApp.Application.Features.MessageStatuses.Queries.Responses;
+using ChatApp.Domain.Enums;
 
 namespace ChatApp.Application.Features.Chats.Queries.Responses
 {
@@ -18,6 +19,7 @@ namespace ChatApp.Application.Features.Chats.Queries.Responses
         string? FilePath,
         int? Duration,
         bool IsEdited,
-        DateTimeOffset SentAt
+        DateTimeOffset SentAt,
+        List<MessageStatusMiniDto> Statuses
     );
 }

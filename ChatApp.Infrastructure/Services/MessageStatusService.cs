@@ -4,6 +4,7 @@ using ChatApp.Domain.Entities;
 using ChatApp.Domain.Enums;
 using ChatApp.Domain.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace ChatApp.Infrastructure.Services
 {
@@ -45,14 +46,21 @@ namespace ChatApp.Infrastructure.Services
 
         public async Task<MessageStatusDto> MarkAsDeliveredAsync(Guid messageId, Guid userId)
         {
-            var status = await _messageStatusRepository.GetTableNoTracking()
+            var status = await _messageStatusRepository.GetTableAsTracking()
                 .FirstOrDefaultAsync(ms => ms.MessageId == messageId && ms.UserId == userId);
 
-            if (status != null && status.Status < MessageState.Delivered)
+            try
             {
-                status.Status = MessageState.Delivered;
-                status.DeliveredAt = DateTimeOffset.UtcNow.ToLocalTime();
-                await _messageStatusRepository.UpdateAsync(status);
+                if (status != null && status.Status < MessageState.Delivered)
+                {
+                    status.Status = MessageState.Delivered;
+                    status.DeliveredAt = DateTimeOffset.UtcNow.ToLocalTime();
+                    await _messageStatusRepository.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error in marking message as delivered : {Message}", ex.InnerException?.Message ?? ex.Message);
             }
 
             var user = await _userService.GetUserByIdAsync(userId);
@@ -73,11 +81,18 @@ namespace ChatApp.Infrastructure.Services
             var status = await _messageStatusRepository.GetTableNoTracking()
                 .FirstOrDefaultAsync(ms => ms.MessageId == messageId && ms.UserId == userId);
 
-            if (status != null && status.Status < MessageState.Read)
+            try
             {
-                status.Status = MessageState.Read;
-                status.ReadAt = DateTimeOffset.UtcNow.ToLocalTime();
-                await _messageStatusRepository.UpdateAsync(status);
+                if (status != null && status.Status < MessageState.Read)
+                {
+                    status.Status = MessageState.Read;
+                    status.ReadAt = DateTimeOffset.UtcNow.ToLocalTime();
+                    await _messageStatusRepository.UpdateAsync(status);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error in marking message as read : {Message}", ex.InnerException?.Message ?? ex.Message);
             }
 
             var user = await _userService.GetUserByIdAsync(userId);
@@ -98,11 +113,18 @@ namespace ChatApp.Infrastructure.Services
             var status = await _messageStatusRepository.GetTableNoTracking()
                 .FirstOrDefaultAsync(ms => ms.MessageId == messageId && ms.UserId == userId);
 
-            if (status != null && status.Status < MessageState.Played)
+            try
             {
-                status.Status = MessageState.Played;
-                status.PlayedAt = DateTimeOffset.UtcNow.ToLocalTime();
-                await _messageStatusRepository.UpdateAsync(status);
+                if (status != null && status.Status < MessageState.Played)
+                {
+                    status.Status = MessageState.Played;
+                    status.PlayedAt = DateTimeOffset.UtcNow.ToLocalTime();
+                    await _messageStatusRepository.UpdateAsync(status);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error in marking message as played : {Message}", ex.InnerException?.Message ?? ex.Message);
             }
 
             var user = await _userService.GetUserByIdAsync(userId);

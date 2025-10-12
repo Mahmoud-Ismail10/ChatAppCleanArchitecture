@@ -24,7 +24,7 @@ namespace ChatApp.Infrastructure.Services
         {
             var chat = await _chatRepository.GetTableNoTracking()
                                             .Include(c => c.Messages)
-                                            .Include(c => c.ChatMembers)
+                                                .ThenInclude(m => m.MessageStatuses)
                                             .FirstOrDefaultAsync(c => c.Id == chatId);
 
             if (chat != null)
@@ -64,7 +64,6 @@ namespace ChatApp.Infrastructure.Services
         public async Task<Chat?> GetChatBetweenUsersAsync(Guid senderId, Guid recevierId)
         {
             return await _chatRepository.GetTableNoTracking()
-                                        .Include(c => c.Messages)
                                         .Include(c => c.ChatMembers)
                                         .FirstOrDefaultAsync(c => c.ChatMembers.Any(m => m.UserId == senderId) &&
                                                                   c.ChatMembers.Any(m => m.UserId == recevierId) &&

@@ -1,6 +1,7 @@
 ﻿using ChatApp.Application.Bases;
 using ChatApp.Application.Features.Chats.Queries.Models;
 using ChatApp.Application.Features.Chats.Queries.Responses;
+using ChatApp.Application.Features.MessageStatuses.Queries.Responses;
 using ChatApp.Application.Resources;
 using ChatApp.Application.Services.Contracts;
 using MediatR;
@@ -79,7 +80,10 @@ namespace ChatApp.Application.Features.Chats.Queries.Handlers
                     m.FilePath,
                     m.Duration,
                     m.IsEdited,
-                    m.SentAt
+                    m.SentAt,
+                    m.MessageStatuses.Select(s => new MessageStatusMiniDto(
+                        s.UserId,
+                        s.Status)).ToList()
                 )).ToList();
 
             var response = new GetChatWithMessagesResponse(

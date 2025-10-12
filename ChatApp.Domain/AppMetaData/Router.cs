@@ -58,6 +58,13 @@
             public const string GetMessageStatuses = Prefix + "getStatuses/" + SingleRoute;
         }
 
+        public static class ConnectionTest
+        {
+            public const string Prefix = Rule + "connectionTest/";
+            public const string Connect = Prefix + "connect";
+            public const string Disconnect = Prefix + "disconnect";
+        }
+
         public static class User
         {
             public const string Prefix = Rule + "users/";

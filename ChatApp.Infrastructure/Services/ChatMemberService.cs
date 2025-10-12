@@ -88,6 +88,17 @@ namespace ChatApp.Infrastructure.Services
                  x.LastMessage != null ? x.LastMessage.Content : null, // LastMessageContent
                  x.LastMessage != null ? x.LastMessage.SentAt : null, // LastMessageSentAt
 
+                 x.ChatMember.Chat!.IsGroup
+                     ? null
+                     : x.ChatMember.Chat.Messages
+                         .Where(m => m.SenderId != userId)
+                         .OrderByDescending(m => m.SentAt)
+                         .Select(m => m.MessageStatuses
+                             .Where(ms => ms.UserId == userId)
+                             .Select(ms => ms.Status)
+                             .FirstOrDefault()
+                         ).FirstOrDefault(), // LastMessageState
+
                  x.ChatMember.Chat.Messages.Count(m =>
                      x.ChatMember.LastReadMessageAt == null || m.SentAt > x.ChatMember.LastReadMessageAt.Value) // UnreadMessagesCount
              )).ToListAsync();
@@ -138,7 +149,7 @@ namespace ChatApp.Infrastructure.Services
                     .Include(ms => ms.Message)
                     .Where(ms => messageIds.Contains(ms.MessageId) &&
                                  ms.UserId == chatMember.UserId &&
-                                 ms.Status == MessageState.Delivered)
+                                 (ms.Status == MessageState.Sent || ms.Status == MessageState.Delivered))
                     .ToListAsync();
 
                 foreach (var status in unreadStatuses)
@@ -171,7 +182,7 @@ namespace ChatApp.Infrastructure.Services
         public async Task<List<Guid>> GetChatMembersIdsAsync(Guid chatId)
         {
             return await _chatMemberRepository.GetTableNoTracking()
-                                              .Where(cm => cm.ChatId == chatId && !cm.IsDeleted)
+                                              .Where(cm => cm.ChatId == chatId && cm.Status == MemberStatus.Active && !cm.IsDeleted)
                                               .Select(cm => cm.UserId)
                                               .ToListAsync();
         }
