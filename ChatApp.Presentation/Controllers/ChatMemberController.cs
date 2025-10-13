@@ -58,6 +58,13 @@ namespace ChatApp.Presentation.Controllers
             var result = await Mediator.Send(new LeftGroupCommand(id));
             return NewResult(result);
         }
+
+        [HttpPut(Router.ChatMember.DeleteGroup)]
+        public async Task<IActionResult> DeleteGroup([FromRoute] Guid id)
+        {
+            var result = await Mediator.Send(new DeleteGroupCommand(id));
+            return NewResult(result);
+        }
     }
 }
 

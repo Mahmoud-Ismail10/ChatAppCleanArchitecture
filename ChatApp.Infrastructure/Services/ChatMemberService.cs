@@ -38,7 +38,9 @@ namespace ChatApp.Infrastructure.Services
              {
                  ChatMember = cm,
                  LastMessage = cm.Chat!.Messages
-                .Where(m => !cm.LeftAt.HasValue || m.SentAt <= cm.LeftAt.Value)
+                .Where(m =>
+                    (!cm.DeletedAt.HasValue || m.SentAt > cm.DeletedAt.Value) &&
+                    (!cm.LeftAt.HasValue || m.SentAt <= cm.LeftAt || m.SentAt >= cm.JoinedAt))
                 .OrderByDescending(m => m.SentAt)
                 .Select(m => new
                 {
@@ -131,7 +133,7 @@ namespace ChatApp.Infrastructure.Services
                                               .FirstOrDefaultAsync();
         }
 
-        public async Task<List<MessageStatus?>> MarkAsReadAsync(Guid chatMemberId)
+        public async Task<List<MessageStatus?>> MarkAllAsReadAsync(Guid chatMemberId)
         {
             try
             {
@@ -149,7 +151,7 @@ namespace ChatApp.Infrastructure.Services
                     .Include(ms => ms.Message)
                     .Where(ms => messageIds.Contains(ms.MessageId) &&
                                  ms.UserId == chatMember.UserId &&
-                                 (ms.Status == MessageState.Sent || ms.Status == MessageState.Delivered))
+                                (ms.Status != MessageState.Read))
                     .ToListAsync();
 
                 foreach (var status in unreadStatuses)
@@ -204,7 +206,7 @@ namespace ChatApp.Infrastructure.Services
             }
         }
 
-        public async Task<string> LeftFromGroupAsync(ChatMember chatMember)
+        public async Task<string> LeftGroupAsync(ChatMember chatMember)
         {
             try
             {
@@ -216,6 +218,22 @@ namespace ChatApp.Infrastructure.Services
             catch (Exception ex)
             {
                 Log.Error("Error in leaving from group: {Message}", ex.InnerException?.Message ?? ex.Message);
+                return "Failed";
+            }
+        }
+
+        public async Task<string> DeleteGroupAsync(ChatMember chatMember)
+        {
+            try
+            {
+                chatMember.IsDeleted = true;
+                chatMember.DeletedAt = DateTimeOffset.UtcNow.ToLocalTime();
+                await _chatMemberRepository.UpdateAsync(chatMember);
+                return "Success";
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error in deleting group: {Message}", ex.InnerException?.Message ?? ex.Message);
                 return "Failed";
             }
         }

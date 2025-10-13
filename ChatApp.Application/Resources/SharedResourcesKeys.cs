@@ -111,6 +111,9 @@
         public const string NoNewMembersToAdd = "NoNewMembersToAdd";
         public const string LeftGroupSuccessfully = "LeftGroupSuccessfully";
         public const string FailedToLeftGroup = "FailedToLeftGroup";
+        public const string GroupDeletedSuccessfully = "GroupDeletedSuccessfully";
+        public const string FailedToDeleteGroup = "FailedToDeleteGroup";
+        public const string LeftGroupFirst = "LeftGroupFirst";
 
     }
 }

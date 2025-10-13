@@ -28,6 +28,7 @@
             public const string RemoveMemberFromGroup = Prefix + "removeMemberFromGroup/" + SingleRoute;
             public const string AddMembersToGroup = Prefix + "addMembersToGroup";
             public const string LeftGroup = Prefix + "leftGroup/" + SingleRoute;
+            public const string DeleteGroup = Prefix + "deleteGroup/" + SingleRoute;
         }
 
         public static class Contact

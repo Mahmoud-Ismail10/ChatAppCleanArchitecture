@@ -15,7 +15,8 @@ namespace ChatApp.Application.Features.ChatsMember.Commands.Handlers
         IRequestHandler<MakeAsAdminOrUnadminCommand, ApiResponse<string>>,
         IRequestHandler<RemoveMemberFromGroupCommand, ApiResponse<string>>,
         IRequestHandler<AddMembersToGroupCommand, ApiResponse<string>>,
-        IRequestHandler<LeftGroupCommand, ApiResponse<string>>
+        IRequestHandler<LeftGroupCommand, ApiResponse<string>>,
+        IRequestHandler<DeleteGroupCommand, ApiResponse<string>>
     {
         #region Fields
         private readonly IChatService _chatService;
@@ -144,6 +145,7 @@ namespace ChatApp.Application.Features.ChatsMember.Commands.Handlers
                 {
                     if (existingMember.Status != MemberStatus.Active)
                     {
+                        existingMember.IsDeleted = false;
                         existingMember.Status = MemberStatus.Active;
                         existingMember.JoinedAt = DateTimeOffset.UtcNow.ToLocalTime();
                     }
@@ -172,10 +174,25 @@ namespace ChatApp.Application.Features.ChatsMember.Commands.Handlers
             if (chatMember.Status != MemberStatus.Active)
                 return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.AccessDenied]);
 
-            var result = await _chatMemberService.LeftFromGroupAsync(chatMember);
+            var result = await _chatMemberService.LeftGroupAsync(chatMember);
             if (result != "Success")
                 return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToLeftGroup]);
             return Success<string>(_stringLocalizer[SharedResourcesKeys.LeftGroupSuccessfully]);
+        }
+
+        public async Task<ApiResponse<string>> Handle(DeleteGroupCommand request, CancellationToken cancellationToken)
+        {
+            var currentUserId = _currentUserService.GetUserId();
+            var chatMember = await _chatMemberService.GetChatMemberByIdAsync(request.ChatMemberId);
+            if (chatMember == null) return NotFound<string>(_stringLocalizer[SharedResourcesKeys.ChatNotFound]);
+
+            if (chatMember.Status == MemberStatus.Active)
+                return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.LeftGroupFirst]);
+
+            var result = await _chatMemberService.DeleteGroupAsync(chatMember);
+            if (result != "Success")
+                return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.FailedToDeleteGroup]);
+            return Deleted<string>(_stringLocalizer[SharedResourcesKeys.GroupDeletedSuccessfully]);
         }
         #endregion
     }

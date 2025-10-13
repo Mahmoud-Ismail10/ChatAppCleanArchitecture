@@ -447,4 +447,13 @@
   <data name="LeftGroupSuccessfully" xml:space="preserve">
     <value>تم مغادرة المجموعة بنجاح.</value>
   </data>
+  <data name="GroupDeletedSuccessfully" xml:space="preserve">
+    <value>تم حذف المجموعة بنجاح.</value>
+  </data>
+  <data name="FailedToDeleteGroup" xml:space="preserve">
+    <value>فشل في حذف المجموعة.</value>
+  </data>
+  <data name="LeftGroupFirst" xml:space="preserve">
+    <value>يجب مغادرة المجموعة أولاً.</value>
+  </data>
 </root>

@@ -98,7 +98,7 @@ namespace ChatApp.Application.Features.Chats.Queries.Handlers
                 messages
             );
 
-            var readStatuses = await _chatMemberService.MarkAsReadAsync(request.ChatMemberId);
+            var readStatuses = await _chatMemberService.MarkAllAsReadAsync(request.ChatMemberId);
 
             // Notify senders of messages in the chat that messages have been read from current user
             foreach (var status in readStatuses)
